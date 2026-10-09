@@ -10,6 +10,8 @@
 import type { InferSelectModel } from 'drizzle-orm'
 import type {
   activityEvents,
+  ideaComments,
+  ideas,
   users,
   workspaceInvites,
   workspaceMembers,
@@ -32,3 +34,9 @@ export type WorkspaceInviteRecord = InferSelectModel<typeof workspaceInvites>
 
 /** One row of the activity_events table. */
 export type ActivityEventRecord = InferSelectModel<typeof activityEvents>
+
+/** One row of the ideas table. */
+export type IdeaRecord = InferSelectModel<typeof ideas>
+
+/** One row of the idea_comments table. */
+export type IdeaCommentRecord = InferSelectModel<typeof ideaComments>

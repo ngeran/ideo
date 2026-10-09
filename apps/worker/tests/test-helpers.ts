@@ -67,7 +67,7 @@ export function createTestApplicationForUser(currentUser: UserRecord) {
      * Sends a JSON request to the app, authenticated as `currentUser`.
      * Returns the raw Response (tests assert status and parsed body).
      */
-    async fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
+    async fetchAsUser(path: string, method: 'GET' | 'POST' | 'PATCH', jsonBody?: unknown): Promise<Response> {
       return application.request(
         path,
         {
@@ -95,7 +95,7 @@ export function createTestApplicationWithoutIdentity() {
   const testEnvironment = env as unknown as EnvironmentBindings
 
   return {
-    async fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
+    async fetchAsUser(path: string, method: 'GET' | 'POST' | 'PATCH', jsonBody?: unknown): Promise<Response> {
       return application.request(
         path,
         {

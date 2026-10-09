@@ -7,6 +7,7 @@
 
 import type { DrizzleD1Database } from 'drizzle-orm/d1'
 // ---- Imports ----------------------------------------------------------------
+import type { BatchItem } from 'drizzle-orm/batch'
 import { drizzle } from 'drizzle-orm/d1'
 import * as drizzleSchema from './drizzle-schema'
 
@@ -14,6 +15,21 @@ import * as drizzleSchema from './drizzle-schema'
 
 /** The Drizzle client type used across the database layer. */
 export type IdeoDatabase = DrizzleD1Database<typeof drizzleSchema>
+
+// ---- Helpers --------------------------------------------------------------
+
+/**
+ * Converts a statement array into the tuple D1's batch requires, failing fast
+ * when a service accidentally built no statements.
+ * Returns the non-empty statement tuple.
+ */
+export function asBatchStatements(
+  statements: BatchItem<'sqlite'>[],
+): [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]] {
+  const [firstStatement, ...remainingStatements] = statements
+  if (!firstStatement) throw new Error('database.batch needs at least one statement')
+  return [firstStatement, ...remainingStatements]
+}
 
 // ---- Factories --------------------------------------------------------------
 

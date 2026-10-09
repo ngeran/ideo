@@ -14,6 +14,7 @@ import type { CurrentUserResolver } from './auth/current-user-resolver'
 import { createDefaultCurrentUserResolver } from './auth/current-user-resolver'
 import type { EnvironmentBindings } from './configuration/environment-bindings'
 import { ApiError } from './routes/api-errors'
+import { createIdeaRoutes } from './routes/idea-routes'
 import { createHealthRoutes } from './routes/health-routes'
 import { createMeRoutes } from './routes/me-routes'
 import { createWorkspaceInviteRoutes } from './routes/workspace-invite-routes'
@@ -52,6 +53,7 @@ export function createApplication(applicationOptions: ApplicationOptions = {}): 
   application.route('/api', createMeRoutes(currentUserResolver))
   application.route('/api', createWorkspaceRoutes(currentUserResolver))
   application.route('/api', createWorkspaceInviteRoutes(currentUserResolver))
+  application.route('/api', createIdeaRoutes(currentUserResolver))
 
   // Known errors become clean JSON; anything unexpected logs and answers 500
   // without leaking internals to the client.
