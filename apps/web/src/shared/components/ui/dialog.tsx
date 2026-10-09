@@ -19,7 +19,10 @@ export const DialogClose = DialogPrimitive.Close
 // ---- Components -------------------------------------------------------------
 
 /** Dimmed backdrop behind the dialog; click to dismiss. */
-export function DialogOverlay({ className, ...overlayProps }: ComponentProps<typeof DialogPrimitive.Overlay>) {
+export function DialogOverlay({
+  className,
+  ...overlayProps
+}: ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
     <DialogPrimitive.Overlay
       className={mergeComponentClasses('fixed inset-0 z-40 bg-black/50', className)}
@@ -62,7 +65,10 @@ export function DialogContent({
 }
 
 /** Accessible title (always render one, visually or not). */
-export function DialogTitle({ className, ...titleProps }: ComponentProps<typeof DialogPrimitive.Title>) {
+export function DialogTitle({
+  className,
+  ...titleProps
+}: ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
       className={mergeComponentClasses('text-base font-semibold text-primary', className)}
@@ -87,6 +93,9 @@ export function DialogDescription({
 /** Right-aligned action strip for the bottom of a dialog. */
 export function DialogFooter({ className, ...footerProps }: ComponentProps<'div'>) {
   return (
-    <div className={mergeComponentClasses('flex flex-row justify-end gap-2', className)} {...footerProps} />
+    <div
+      className={mergeComponentClasses('flex flex-row justify-end gap-2', className)}
+      {...footerProps}
+    />
   )
 }

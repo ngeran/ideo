@@ -6,7 +6,7 @@
    USED BY: apps/web/src/main.tsx (imported once), every component
    ============================================================================= */
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* Dark mode is class-based: the `dark` class on <html> is applied before first
    paint by the inline script in index.html and kept in sync by ThemeProvider. */
@@ -83,8 +83,8 @@
   --color-stage-planned: var(--stage-planned);
   --color-stage-launched: var(--stage-launched);
   --radius-control: var(--radius-control);
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 }
 
 /* ---- Base element styles --------------------------------------------------- */

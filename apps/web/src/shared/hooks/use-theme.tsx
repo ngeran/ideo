@@ -6,9 +6,9 @@
 // USED BY: app/application-providers.tsx (mounts it), ThemeToggle, Toaster
 // =============================================================================
 
+import type { ReactNode } from 'react'
 // ---- Imports ----------------------------------------------------------------
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
 import type { ResolvedTheme, ThemeChoice } from '../lib/theme-storage'
 import { readSavedThemeChoice, resolveThemeChoice, saveThemeChoice } from '../lib/theme-storage'
 
@@ -42,7 +42,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // (The no-flash script cannot do this part — it only runs once.)
   useEffect(() => {
     const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleSystemChange = (queryEvent: MediaQueryListEvent) => setSystemPrefersDark(queryEvent.matches)
+    const handleSystemChange = (queryEvent: MediaQueryListEvent) =>
+      setSystemPrefersDark(queryEvent.matches)
     darkModeQuery.addEventListener('change', handleSystemChange)
     return () => darkModeQuery.removeEventListener('change', handleSystemChange)
   }, [])

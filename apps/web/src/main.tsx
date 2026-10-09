@@ -1,10 +1,15 @@
 // =============================================================================
 // FILE:    apps/web/src/main.tsx
-// PURPOSE: Browser entry point: mounts the React application into index.html.
+// PURPOSE: Browser entry point: loads the self-hosted fonts and the design
+//          tokens, then mounts the React application into index.html.
 // USED BY: apps/web/index.html (module script)
 // =============================================================================
 
 // ---- Imports ----------------------------------------------------------------
+import '@fontsource-variable/inter'
+import '@fontsource-variable/jetbrains-mono'
+import './shared/styles/global.css'
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApplicationRoot } from './app/application-root'

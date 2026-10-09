@@ -28,9 +28,7 @@ export type UserAvatarProps = ComponentProps<typeof AvatarPrimitive.Root> & {
  */
 function deriveInitials(displayName: string): string {
   const nameParts = displayName.trim().split(/\s+/).slice(0, 2)
-  return nameParts
-    .map((namePart) => namePart.charAt(0).toUpperCase())
-    .join('')
+  return nameParts.map((namePart) => namePart.charAt(0).toUpperCase()).join('')
 }
 
 // ---- Component --------------------------------------------------------------
@@ -39,7 +37,13 @@ function deriveInitials(displayName: string): string {
  * Round avatar showing the user's initials on their color.
  * Sizes via className (e.g. `size-8`); adds a teal ring when online.
  */
-export function UserAvatar({ displayName, avatarColor, isOnline = false, className, ...avatarProps }: UserAvatarProps) {
+export function UserAvatar({
+  displayName,
+  avatarColor,
+  isOnline = false,
+  className,
+  ...avatarProps
+}: UserAvatarProps) {
   return (
     <AvatarPrimitive.Root
       className={mergeComponentClasses(

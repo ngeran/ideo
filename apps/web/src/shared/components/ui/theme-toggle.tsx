@@ -9,8 +9,8 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { useTheme } from '../../hooks/use-theme'
-import type { ThemeChoice } from '../../lib/theme-storage'
 import { mergeComponentClasses } from '../../lib/merge-component-classes'
+import type { ThemeChoice } from '../../lib/theme-storage'
 import { Button } from './button'
 import {
   DropdownMenu,

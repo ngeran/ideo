@@ -63,7 +63,10 @@ export function DropdownMenuLabel({
 }: ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
     <DropdownMenuPrimitive.Label
-      className={mergeComponentClasses('px-2.5 py-1.5 text-xs font-medium text-muted font-mono', className)}
+      className={mergeComponentClasses(
+        'px-2.5 py-1.5 text-xs font-medium text-muted font-mono',
+        className,
+      )}
       {...labelProps}
     />
   )

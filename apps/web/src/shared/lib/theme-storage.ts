@@ -60,7 +60,10 @@ export function saveThemeChoice(themeChoice: ThemeChoice): void {
  * Resolves a theme choice to the theme that should be painted.
  * Returns 'dark' or 'light' based on the choice and the system preference.
  */
-export function resolveThemeChoice(themeChoice: ThemeChoice, systemPrefersDark: boolean): ResolvedTheme {
+export function resolveThemeChoice(
+  themeChoice: ThemeChoice,
+  systemPrefersDark: boolean,
+): ResolvedTheme {
   if (themeChoice === 'system') return systemPrefersDark ? 'dark' : 'light'
   return themeChoice
 }

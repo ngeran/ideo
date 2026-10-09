@@ -5,14 +5,14 @@
 // USED BY: app shell (owns open state, the shortcut, and the nav commands)
 // =============================================================================
 
+import { useNavigate } from '@tanstack/react-router'
 // ---- Imports ----------------------------------------------------------------
 import { Command } from 'cmdk'
-import { Monitor, Moon, Sun } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { useNavigate } from '@tanstack/react-router'
+import { Monitor, Moon, Sun } from 'lucide-react'
+import { useTheme } from '../../hooks/use-theme'
 import type { ThemeChoice } from '../../lib/theme-storage'
 import { Dialog, DialogContent, DialogTitle } from './dialog'
-import { useTheme } from '../../hooks/use-theme'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -59,7 +59,10 @@ export function CommandMenu({ isOpen, onOpenChange, navigationCommands }: Comman
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="p-0 overflow-hidden sm:top-[20%] sm:translate-y-0">
+      <DialogContent
+        showCloseButton={false}
+        className="p-0 overflow-hidden sm:top-[20%] sm:translate-y-0"
+      >
         <DialogTitle className="sr-only">Command menu</DialogTitle>
         <Command
           label="Command menu"
@@ -70,7 +73,9 @@ export function CommandMenu({ isOpen, onOpenChange, navigationCommands }: Comman
             className="w-full border-b border-subtle bg-transparent px-4 py-3.5 text-sm text-primary outline-none placeholder:text-muted"
           />
           <Command.List className="max-h-72 overflow-y-auto p-1.5">
-            <Command.Empty className="px-3 py-6 text-center text-sm text-muted">No matching command.</Command.Empty>
+            <Command.Empty className="px-3 py-6 text-center text-sm text-muted">
+              No matching command.
+            </Command.Empty>
 
             <Command.Group heading="Navigate">
               {navigationCommands.map(({ label, path, Icon }) => (

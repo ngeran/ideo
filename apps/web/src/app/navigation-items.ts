@@ -6,9 +6,10 @@
 // USED BY: app-sidebar.tsx, app-bottom-tabs.tsx, application-shell.tsx
 // =============================================================================
 
-// ---- Imports ----------------------------------------------------------------
-import { Activity, CalendarClock, ListTodo, Lightbulb, Map } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+// ---- Imports ----------------------------------------------------------------
+// `Map` is renamed so it cannot shadow the global Map constructor.
+import { Activity, CalendarClock, Lightbulb, ListTodo, Map as MapIcon } from 'lucide-react'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ export type NavigationItem = {
  */
 export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { itemId: 'board', label: 'Board', path: '/board', Icon: Lightbulb },
-  { itemId: 'plans', label: 'Plans', path: '/plans', Icon: Map },
+  { itemId: 'plans', label: 'Plans', path: '/plans', Icon: MapIcon },
   { itemId: 'tasks', label: 'Tasks', path: '/tasks', Icon: ListTodo },
   { itemId: 'sessions', label: 'Sessions', path: '/sessions', Icon: CalendarClock },
   { itemId: 'activity', label: 'Activity', path: '/activity', Icon: Activity },

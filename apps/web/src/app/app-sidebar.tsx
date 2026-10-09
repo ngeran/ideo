@@ -7,10 +7,10 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { Link } from '@tanstack/react-router'
-import { Lightbulb } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { NAVIGATION_ITEMS } from './navigation-items'
+import { Lightbulb } from 'lucide-react'
 import { ThemeToggle } from '../shared/components/ui/theme-toggle'
+import { NAVIGATION_ITEMS } from './navigation-items'
 
 // ---- Types ------------------------------------------------------------------
 type AppSidebarProps = {
@@ -40,7 +40,11 @@ function SidebarLink({ label, path, Icon }: { label: string; path: string; Icon:
 export function AppSidebar({ workspaceName }: AppSidebarProps) {
   return (
     <aside className="flex h-dvh w-60 shrink-0 flex-col gap-6 border-r border-subtle bg-card p-4">
-      <Link to="/" className="flex items-center gap-2.5 rounded-control px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="Ideo overview">
+      <Link
+        to="/"
+        className="flex items-center gap-2.5 rounded-control px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        aria-label="Ideo overview"
+      >
         <Lightbulb className="size-6 text-accent" aria-hidden />
         <span className="flex flex-col">
           <span className="font-mono text-base font-semibold text-primary">Ideo</span>

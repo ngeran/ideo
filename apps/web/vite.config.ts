@@ -6,6 +6,7 @@
 // USED BY: `pnpm dev` and `pnpm build` (see apps/web/package.json)
 // =============================================================================
 
+import tailwindcss from '@tailwindcss/vite'
 // ---- Imports ----------------------------------------------------------------
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -17,7 +18,7 @@ const WORKER_DEV_ORIGIN = 'http://localhost:8787'
 
 // ---- Configuration ----------------------------------------------------------
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     proxy: {
       // JSON API requests go to the Worker as-is.

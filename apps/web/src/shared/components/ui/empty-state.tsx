@@ -27,7 +27,13 @@ export type EmptyStateProps = {
  * Centered empty-state block for lists and boards.
  * Keep `description` to one actionable sentence.
  */
-export function EmptyState({ icon: StateIcon, title, description, action, className }: EmptyStateProps) {
+export function EmptyState({
+  icon: StateIcon,
+  title,
+  description,
+  action,
+  className,
+}: EmptyStateProps) {
   return (
     <div
       className={mergeComponentClasses(

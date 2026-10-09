@@ -19,5 +19,11 @@ export type SkeletonProps = ComponentProps<'div'>
  * Inherits its size from className (e.g. `h-4 w-32`).
  */
 export function Skeleton({ className, ...skeletonProps }: SkeletonProps) {
-  return <div aria-hidden className={mergeComponentClasses('animate-pulse rounded-control bg-sunken', className)} {...skeletonProps} />
+  return (
+    <div
+      aria-hidden
+      className={mergeComponentClasses('animate-pulse rounded-control bg-sunken', className)}
+      {...skeletonProps}
+    />
+  )
 }

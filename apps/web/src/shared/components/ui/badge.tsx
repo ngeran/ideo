@@ -6,10 +6,10 @@
 // USED BY: idea cards, plan lists, task board, overview page
 // =============================================================================
 
-// ---- Imports ----------------------------------------------------------------
-import { cva } from 'class-variance-authority'
 import type { IdeaStage } from '@ideo/shared'
 import { IDEA_STAGE_LABELS } from '@ideo/shared'
+// ---- Imports ----------------------------------------------------------------
+import { cva } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 import { mergeComponentClasses } from '../../lib/merge-component-classes'
 
@@ -40,7 +40,12 @@ const badgeVariants = cva(
 
 /** Generic status label. */
 export function Badge({ className, variant = 'default', ...badgeProps }: BadgeProps) {
-  return <span className={mergeComponentClasses(badgeVariants({ variant }), className)} {...badgeProps} />
+  return (
+    <span
+      className={mergeComponentClasses(badgeVariants({ variant }), className)}
+      {...badgeProps}
+    />
+  )
 }
 
 // ---- Types ------------------------------------------------------------------

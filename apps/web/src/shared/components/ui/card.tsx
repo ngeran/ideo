@@ -18,7 +18,10 @@ export type CardProps = ComponentProps<'div'>
 export function Card({ className, ...cardProps }: CardProps) {
   return (
     <div
-      className={mergeComponentClasses('rounded-control border border-subtle bg-card text-primary', className)}
+      className={mergeComponentClasses(
+        'rounded-control border border-subtle bg-card text-primary',
+        className,
+      )}
       {...cardProps}
     />
   )
@@ -26,17 +29,29 @@ export function Card({ className, ...cardProps }: CardProps) {
 
 /** Top area of a card; holds CardTitle and CardDescription. */
 export function CardHeader({ className, ...headerProps }: ComponentProps<'div'>) {
-  return <div className={mergeComponentClasses('flex flex-col gap-1.5 p-5', className)} {...headerProps} />
+  return (
+    <div
+      className={mergeComponentClasses('flex flex-col gap-1.5 p-5', className)}
+      {...headerProps}
+    />
+  )
 }
 
 /** The card's heading. */
 export function CardTitle({ className, ...titleProps }: ComponentProps<'h3'>) {
-  return <h3 className={mergeComponentClasses('font-semibold text-base leading-none', className)} {...titleProps} />
+  return (
+    <h3
+      className={mergeComponentClasses('font-semibold text-base leading-none', className)}
+      {...titleProps}
+    />
+  )
 }
 
 /** Muted one-liner under the title. */
 export function CardDescription({ className, ...descriptionProps }: ComponentProps<'p'>) {
-  return <p className={mergeComponentClasses('text-sm text-muted', className)} {...descriptionProps} />
+  return (
+    <p className={mergeComponentClasses('text-sm text-muted', className)} {...descriptionProps} />
+  )
 }
 
 /** The card's body. */
@@ -46,5 +61,10 @@ export function CardContent({ className, ...contentProps }: ComponentProps<'div'
 
 /** Bottom strip of a card; right-aligns actions by default. */
 export function CardFooter({ className, ...footerProps }: ComponentProps<'div'>) {
-  return <div className={mergeComponentClasses('flex items-center justify-end gap-2 p-5 pt-0', className)} {...footerProps} />
+  return (
+    <div
+      className={mergeComponentClasses('flex items-center justify-end gap-2 p-5 pt-0', className)}
+      {...footerProps}
+    />
+  )
 }

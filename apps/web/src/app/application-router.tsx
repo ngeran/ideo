@@ -17,7 +17,11 @@ import { SectionPlaceholderPage } from './section-placeholder-page'
 /** Root route: every page renders inside the application shell. */
 const rootRoute = createRootRoute({ component: ApplicationShell })
 
-const overviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: OverviewPage })
+const overviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: OverviewPage,
+})
 
 /** Placeholder sections, one per feature phase still to come. */
 const boardRoute = createRoute({
@@ -35,7 +39,10 @@ const plansRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/plans',
   component: () => (
-    <SectionPlaceholderPage title="Plans" description="Promote an idea, add milestones and notes. Lands in Phase 6." />
+    <SectionPlaceholderPage
+      title="Plans"
+      description="Promote an idea, add milestones and notes. Lands in Phase 6."
+    />
   ),
 })
 
@@ -43,7 +50,10 @@ const tasksRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/tasks',
   component: () => (
-    <SectionPlaceholderPage title="Tasks" description="To do, Doing, Done — with assignees. Lands in Phase 6." />
+    <SectionPlaceholderPage
+      title="Tasks"
+      description="To do, Doing, Done — with assignees. Lands in Phase 6."
+    />
   ),
 })
 
@@ -62,7 +72,10 @@ const activityRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/activity',
   component: () => (
-    <SectionPlaceholderPage title="Activity feed" description="Who did what, live. Lands in Phase 9." />
+    <SectionPlaceholderPage
+      title="Activity feed"
+      description="Who did what, live. Lands in Phase 9."
+    />
   ),
 })
 

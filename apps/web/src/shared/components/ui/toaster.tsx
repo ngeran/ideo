@@ -6,6 +6,7 @@
 // USED BY: app/application-providers.tsx (mounted once)
 // =============================================================================
 
+import type { CSSProperties } from 'react'
 // ---- Imports ----------------------------------------------------------------
 import { Toaster as SonnerToaster } from 'sonner'
 import { useTheme } from '../../hooks/use-theme'
@@ -30,7 +31,7 @@ export function AppToaster() {
           '--normal-text': 'var(--text-primary)',
           '--normal-border': 'var(--border-subtle)',
           '--border-radius': 'var(--radius-control)',
-        } as const
+        } as CSSProperties
       }
     />
   )

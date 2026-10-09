@@ -17,6 +17,8 @@ import { twMerge } from 'tailwind-merge'
  * `bg-accent` instead of both being emitted.
  * Returns the merged class string.
  */
-export function mergeComponentClasses(...classLists: Array<string | false | null | undefined>): string {
+export function mergeComponentClasses(
+  ...classLists: Array<string | false | null | undefined>
+): string {
   return twMerge(clsx(classLists))
 }

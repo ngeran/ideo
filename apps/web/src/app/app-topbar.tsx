@@ -23,7 +23,11 @@ type AppTopBarProps = {
 export function AppTopBar({ workspaceName, onOpenCommandMenu }: AppTopBarProps) {
   return (
     <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-subtle bg-page/95 px-4 py-2.5 backdrop-blur md:hidden">
-      <Link to="/" className="flex items-center gap-2 rounded-control outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="Ideo overview">
+      <Link
+        to="/"
+        className="flex items-center gap-2 rounded-control outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        aria-label="Ideo overview"
+      >
         <Lightbulb className="size-5 text-accent" aria-hidden />
         <span className="font-mono text-sm font-semibold text-primary">Ideo</span>
       </Link>

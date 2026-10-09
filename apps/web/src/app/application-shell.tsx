@@ -9,12 +9,12 @@
 // ---- Imports ----------------------------------------------------------------
 import { Outlet } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import type { CommandMenuNavigation } from '../shared/components/ui/command-menu'
+import { CommandMenu } from '../shared/components/ui/command-menu'
 import { AppBottomTabs } from './app-bottom-tabs'
 import { AppSidebar } from './app-sidebar'
 import { AppTopBar } from './app-topbar'
 import { NAVIGATION_ITEMS } from './navigation-items'
-import { CommandMenu } from '../shared/components/ui/command-menu'
-import type { CommandMenuNavigation } from '../shared/components/ui/command-menu'
 
 // ---- Constants --------------------------------------------------------------
 
@@ -70,8 +70,14 @@ export function ApplicationShell() {
 
       {/* Page column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <AppTopBar workspaceName={CURRENT_WORKSPACE_NAME} onOpenCommandMenu={() => setIsCommandMenuOpen(true)} />
-        <main id="page-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 md:px-8 md:pb-10">
+        <AppTopBar
+          workspaceName={CURRENT_WORKSPACE_NAME}
+          onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
+        />
+        <main
+          id="page-content"
+          className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 md:px-8 md:pb-10"
+        >
           <Outlet />
         </main>
       </div>

@@ -14,9 +14,9 @@
       // (same storage key and resolution rules).
       ;(function applyThemeBeforePaint() {
         try {
-          var savedChoice = localStorage.getItem('ideo-theme')
-          var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-          var shouldUseDark =
+          const savedChoice = localStorage.getItem('ideo-theme')
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const shouldUseDark =
             savedChoice === 'dark' || ((savedChoice === null || savedChoice === 'system') && systemPrefersDark)
           document.documentElement.classList.toggle('dark', shouldUseDark)
           document.documentElement.style.colorScheme = shouldUseDark ? 'dark' : 'light'

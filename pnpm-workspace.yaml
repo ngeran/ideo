@@ -12,6 +12,7 @@ minimumReleaseAgeExclude:
   - vite@8.3.4
   - wrangler@4.149.0
   - "@cloudflare/vitest-plugin@1.4.0"
+  - lucide-react@1.54.0
 
 onlyBuiltDependencies:
   - esbuild
