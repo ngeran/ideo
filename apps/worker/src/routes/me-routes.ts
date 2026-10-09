@@ -7,9 +7,9 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { Hono } from 'hono'
-import type { CurrentUserResolver } from '../auth/current-user-resolver'
-import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
 import type { AuthenticatedContext } from '../auth/current-user-middleware'
+import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
+import type { CurrentUserResolver } from '../auth/current-user-resolver'
 import { createDatabase } from '../database/create-database'
 import { listWorkspacesForUser } from '../database/workspace-queries'
 import { buildUserResponse, buildWorkspaceResponse } from './response-builders'
@@ -20,7 +20,9 @@ import { buildUserResponse, buildWorkspaceResponse } from './response-builders'
  * Creates the /me route group.
  * Returns a Hono instance with `GET /me` (authentication required).
  */
-export function createMeRoutes(currentUserResolver: CurrentUserResolver): Hono<AuthenticatedContext> {
+export function createMeRoutes(
+  currentUserResolver: CurrentUserResolver,
+): Hono<AuthenticatedContext> {
   const meRoutes = new Hono<AuthenticatedContext>()
 
   meRoutes.use('*', createCurrentUserMiddleware(currentUserResolver))

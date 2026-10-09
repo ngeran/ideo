@@ -18,9 +18,6 @@ import { NAVIGATION_ITEMS } from './navigation-items'
 
 // ---- Constants --------------------------------------------------------------
 
-/** Placeholder until workspaces land in Phase 3. */
-const CURRENT_WORKSPACE_NAME = 'Your workspace'
-
 /** The command palette's "Navigate" group mirrors the primary sections. */
 const COMMAND_NAVIGATION: ReadonlyArray<CommandMenuNavigation> = NAVIGATION_ITEMS.map(
   ({ label, path, Icon }) => ({ label: `Go to ${label}`, path, Icon }),
@@ -65,15 +62,12 @@ export function ApplicationShell() {
 
       {/* Desktop chrome */}
       <div className="hidden md:block">
-        <AppSidebar workspaceName={CURRENT_WORKSPACE_NAME} />
+        <AppSidebar />
       </div>
 
       {/* Page column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <AppTopBar
-          workspaceName={CURRENT_WORKSPACE_NAME}
-          onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
-        />
+        <AppTopBar onOpenCommandMenu={() => setIsCommandMenuOpen(true)} />
         <main
           id="page-content"
           className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 md:px-8 md:pb-10"

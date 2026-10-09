@@ -9,9 +9,9 @@
 
 // ---- Imports ----------------------------------------------------------------
 import type { MiddlewareHandler } from 'hono'
-import type { CurrentUserResolver } from './current-user-resolver'
 import type { EnvironmentBindings } from '../configuration/environment-bindings'
 import type { UserRecord } from '../configuration/record-types'
+import type { CurrentUserResolver } from './current-user-resolver'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -33,7 +33,9 @@ export type AuthenticatedContext = {
  * Returns a MiddlewareHandler; identity failures throw ApiError(401), which
  * the application error handler renders.
  */
-export function createCurrentUserMiddleware(currentUserResolver: CurrentUserResolver): MiddlewareHandler<AuthenticatedContext> {
+export function createCurrentUserMiddleware(
+  currentUserResolver: CurrentUserResolver,
+): MiddlewareHandler<AuthenticatedContext> {
   return async (requestContext, next) => {
     const currentUser = await currentUserResolver(requestContext.req.raw, requestContext.env)
     requestContext.set('currentUser', currentUser)

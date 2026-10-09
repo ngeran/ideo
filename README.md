@@ -2,17 +2,17 @@
 
 A private space for your team's ideas, brainstorms, plans, and tasks — from first spark to launched. Runs entirely on **Cloudflare's free tier**: one Worker serves the web app and the API, D1 stores the data, and Durable Objects power realtime updates.
 
-## Status: Phase 1 — skeleton
+## Status: Phase 3 — auth + workspaces
 
-The monorepo, Worker, web app, database schema, and CI are wired together. Features land phase by phase (see `docs/architecture.md` once written). What works today: the web app loads, the Worker answers `/api/health`, tests run in real workerd, and the Wrangler config deploys (dry run).
+The design system (light/dark themes, app shell, command palette), authentication (Cloudflare Access in production, a guarded dev fallback locally), workspaces with invite codes, and the join flow are live. Next phases: the idea board, realtime, plans and tasks, collaborative notes, brainstorm sessions, PWA/export/activity.
 
 ## Run it locally in 5 steps
 
 1. **Install Node 22+ and pnpm** — e.g. `corepack enable` (pnpm version comes from `packageManager` in `package.json`).
 2. **Install dependencies** — `pnpm install`
-3. **Create the local database** — `npx wrangler d1 create ideo-database`, then paste the printed `database_id` into `wrangler.jsonc`. (Not needed for Phase 1, but do it once.)
-4. **Start the dev servers** — `pnpm dev`, then open http://localhost:5173. Vite serves the app with hot reload on :5173 and proxies `/api` + `/ws` to `wrangler dev` on :8787.
-5. **Check it works** — the page shows the Worker health check as *ok*, and `pnpm verify` runs typecheck, lint, build, tests, and a deploy dry run.
+3. **Create the local database and identity** — `npx wrangler d1 create ideo-database`, paste the printed `database_id` into `wrangler.jsonc`, then `cp .dev.vars.example .dev.vars` and `pnpm db:migrate:local`.
+4. **Start the dev servers** — `pnpm dev`, then open http://localhost:5173. Vite serves the app with hot reload on :5173 and proxies `/api` + `/ws` to `wrangler dev` on :8787. Your dev identity comes from `DEVELOPMENT_USER_EMAIL` in `.dev.vars`.
+5. **Check it works** — create a workspace from the switcher, invite with a code, and run `pnpm verify` (typecheck, lint, build, tests in real workerd, deploy dry run).
 
 ## Scripts (repo root)
 

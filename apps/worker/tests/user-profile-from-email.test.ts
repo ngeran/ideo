@@ -7,7 +7,10 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { describe, expect, it } from 'vitest'
-import { deriveAvatarColorFromEmail, deriveDisplayNameFromEmail } from '../src/auth/user-profile-from-email'
+import {
+  deriveAvatarColorFromEmail,
+  deriveDisplayNameFromEmail,
+} from '../src/auth/user-profile-from-email'
 
 // ---- Tests ------------------------------------------------------------------
 describe('deriveDisplayNameFromEmail', () => {
@@ -26,7 +29,9 @@ describe('deriveDisplayNameFromEmail', () => {
 
 describe('deriveAvatarColorFromEmail', () => {
   it('returns the same color for the same email', () => {
-    expect(deriveAvatarColorFromEmail('ada@example.com')).toBe(deriveAvatarColorFromEmail('ada@example.com'))
+    expect(deriveAvatarColorFromEmail('ada@example.com')).toBe(
+      deriveAvatarColorFromEmail('ada@example.com'),
+    )
   })
 
   it('returns a valid hex color', () => {

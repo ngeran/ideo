@@ -8,14 +8,14 @@
 // =============================================================================
 
 // ---- Imports ----------------------------------------------------------------
-import path from 'node:path'
 import { cloudflareTest, readD1Migrations } from '@cloudflare/vitest-plugin'
 import { defineConfig } from 'vitest/config'
 
 // ---- Configuration ----------------------------------------------------------
 export default defineConfig(async () => {
-  // Read on the Node side, then hand to the worker as a plain binding.
-  const d1Migrations = await readD1Migrations(path.join(import.meta.dirname, 'migrations'))
+  // Read on the Node side (relative to this package's working directory),
+  // then hand the parsed migrations to the worker as a plain binding.
+  const d1Migrations = await readD1Migrations('migrations')
 
   return {
     plugins: [

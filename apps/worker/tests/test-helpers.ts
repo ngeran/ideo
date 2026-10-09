@@ -9,11 +9,12 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { env } from 'cloudflare:test'
-import { createApplication } from '../src/create-application'
-import type { UserRecord } from '../src/configuration/record-types'
 import type { EnvironmentBindings } from '../src/configuration/environment-bindings'
+import type { UserRecord } from '../src/configuration/record-types'
+import { createApplication } from '../src/create-application'
+import { createDatabase } from '../src/database/create-database'
+import { insertUserIgnoringDuplicates } from '../src/database/user-queries'
 import { authenticationRequiredError } from '../src/routes/api-errors'
-import type { AuthenticatedContext } from '../src/auth/current-user-middleware'
 
 // ---- Constants --------------------------------------------------------------
 
@@ -44,15 +45,29 @@ export function createTestUserRecord(userNumber: number): UserRecord {
  * Returns the app plus a helper for JSON requests against the test env.
  */
 export function createTestApplicationForUser(currentUser: UserRecord) {
-  const application = createApplication({ currentUserResolver: async () => currentUser })
   const testEnvironment = env as unknown as EnvironmentBindings
+  const application = createApplication({
+    // Mirrors production: the resolver guarantees the user row exists before
+    // the request runs (idempotent, so repeat requests are cheap to reason
+    // about under per-test rollback).
+    currentUserResolver: async () => {
+      await insertUserIgnoringDuplicates(createDatabase(testEnvironment.DATABASE), {
+        id: currentUser.id,
+        email: currentUser.email,
+        displayName: currentUser.displayName,
+        avatarColor: currentUser.avatarColor,
+        createdAt: currentUser.createdAt,
+      })
+      return currentUser
+    },
+  })
 
   return {
     /**
      * Sends a JSON request to the app, authenticated as `currentUser`.
      * Returns the raw Response (tests assert status and parsed body).
      */
-    fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
+    async fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
       return application.request(
         path,
         {
@@ -80,7 +95,7 @@ export function createTestApplicationWithoutIdentity() {
   const testEnvironment = env as unknown as EnvironmentBindings
 
   return {
-    fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
+    async fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
       return application.request(
         path,
         {
@@ -93,6 +108,3 @@ export function createTestApplicationWithoutIdentity() {
     },
   }
 }
-
-// Re-export so tests can type their contexts without importing internals.
-export type { AuthenticatedContext }

@@ -54,5 +54,7 @@ export function deriveDisplayNameFromEmail(email: string): string {
  */
 export function deriveAvatarColorFromEmail(email: string): string {
   const emailCharCodeSum = [...email].reduce((sum, character) => sum + character.charCodeAt(0), 0)
-  return AVATAR_COLOR_PALETTE[emailCharCodeSum % AVATAR_COLOR_PALETTE.length] ?? DEFAULT_AVATAR_COLOR
+  return (
+    AVATAR_COLOR_PALETTE[emailCharCodeSum % AVATAR_COLOR_PALETTE.length] ?? DEFAULT_AVATAR_COLOR
+  )
 }

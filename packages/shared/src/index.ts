@@ -36,15 +36,19 @@ export type {
   MeResponse,
   UserResponse,
   WorkspaceDetailResponse,
+  WorkspaceInviteCreatedResponse,
   WorkspaceInviteResponse,
   WorkspaceMemberResponse,
+  WorkspaceMutationResponse,
   WorkspaceResponse,
 } from './schemas/workspace-response-schemas'
 export {
   meResponseSchema,
   userResponseSchema,
   workspaceDetailResponseSchema,
+  workspaceInviteCreatedResponseSchema,
   workspaceInviteResponseSchema,
   workspaceMemberResponseSchema,
+  workspaceMutationResponseSchema,
   workspaceResponseSchema,
 } from './schemas/workspace-response-schemas'

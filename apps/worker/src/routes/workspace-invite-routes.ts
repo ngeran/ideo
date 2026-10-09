@@ -5,18 +5,18 @@
 // USED BY: create-application.ts (mounted at /api)
 // =============================================================================
 
+import { zValidator } from '@hono/zod-validator'
+import type { WorkspaceInviteResponse } from '@ideo/shared'
+import { createWorkspaceInviteRequestSchema } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
-import type { CurrentUserResolver } from '../auth/current-user-resolver'
-import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
 import type { AuthenticatedContext } from '../auth/current-user-middleware'
-import { createWorkspaceInviteRequestSchema } from '@ideo/shared'
-import type { WorkspaceInviteResponse } from '@ideo/shared'
+import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
+import type { CurrentUserResolver } from '../auth/current-user-resolver'
 import { createDatabase } from '../database/create-database'
 import { findWorkspaceForMember } from '../database/workspace-queries'
 import { createWorkspaceInviteForWorkspace } from '../services/invite-service'
-import { workspaceAccessDeniedError, validationFailedError } from './api-errors'
+import { validationFailedError, workspaceAccessDeniedError } from './api-errors'
 
 // ---- Validation helpers -----------------------------------------------------
 
@@ -27,7 +27,9 @@ function reportZodFailure(validationResult: {
 }) {
   const failedValidation = !validationResult.success && validationResult.error !== undefined
   if (failedValidation) {
-    const failureMessages = (validationResult.error?.issues ?? []).map((issue) => issue.message).join('; ')
+    const failureMessages = (validationResult.error?.issues ?? [])
+      .map((issue) => issue.message)
+      .join('; ')
     throw validationFailedError(failureMessages)
   }
 }
@@ -39,7 +41,9 @@ function reportZodFailure(validationResult: {
  * Returns a Hono instance mounted under /api with:
  *   POST /workspaces/:workspaceId/invites   create an invite (members only)
  */
-export function createWorkspaceInviteRoutes(currentUserResolver: CurrentUserResolver): Hono<AuthenticatedContext> {
+export function createWorkspaceInviteRoutes(
+  currentUserResolver: CurrentUserResolver,
+): Hono<AuthenticatedContext> {
   const inviteRoutes = new Hono<AuthenticatedContext>()
 
   inviteRoutes.use('*', createCurrentUserMiddleware(currentUserResolver))

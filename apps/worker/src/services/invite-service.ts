@@ -8,8 +8,8 @@
 
 // ---- Imports ----------------------------------------------------------------
 import type { UserRecord, WorkspaceInviteRecord } from '../configuration/record-types'
-import type { IdeoDatabase } from '../database/create-database'
 import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
+import type { IdeoDatabase } from '../database/create-database'
 import { buildInsertWorkspaceInviteStatement } from '../database/workspace-invite-queries'
 import { createInviteCode } from './create-invite-code'
 

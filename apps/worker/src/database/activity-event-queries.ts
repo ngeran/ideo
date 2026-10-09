@@ -32,7 +32,10 @@ export type NewActivityEventInput = {
  * silently diverge from reality.
  * Returns the un-awaited drizzle insert statement.
  */
-export function buildInsertActivityEventStatement(database: IdeoDatabase, newEvent: NewActivityEventInput) {
+export function buildInsertActivityEventStatement(
+  database: IdeoDatabase,
+  newEvent: NewActivityEventInput,
+) {
   return database.insert(activityEvents).values(newEvent)
 }
 
@@ -46,7 +49,11 @@ export async function listRecentActivityEvents(
   limit: number,
 ): Promise<Array<{ id: string; summaryText: string; createdAt: string }>> {
   const eventRows = await database
-    .select({ id: activityEvents.id, summaryText: activityEvents.summaryText, createdAt: activityEvents.createdAt })
+    .select({
+      id: activityEvents.id,
+      summaryText: activityEvents.summaryText,
+      createdAt: activityEvents.createdAt,
+    })
     .from(activityEvents)
     .where(eq(activityEvents.workspaceId, workspaceId))
     .orderBy(desc(activityEvents.createdAt))

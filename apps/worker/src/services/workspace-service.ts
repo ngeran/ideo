@@ -8,10 +8,13 @@
 
 // ---- Imports ----------------------------------------------------------------
 import type { UserRecord, WorkspaceRecord } from '../configuration/record-types'
-import type { IdeoDatabase } from '../database/create-database'
 import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
+import type { IdeoDatabase } from '../database/create-database'
+import {
+  buildIncrementInviteUseStatement,
+  findWorkspaceInviteByCode,
+} from '../database/workspace-invite-queries'
 import { buildInsertWorkspaceMemberStatement } from '../database/workspace-member-queries'
-import { findWorkspaceInviteByCode, buildIncrementInviteUseStatement } from '../database/workspace-invite-queries'
 import { buildInsertWorkspaceStatement, findWorkspaceById } from '../database/workspace-queries'
 import { inviteExhaustedError, inviteExpiredError, inviteNotFoundError } from '../routes/api-errors'
 

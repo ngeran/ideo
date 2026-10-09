@@ -6,10 +6,10 @@
 //          workspace-invite-routes.ts
 // =============================================================================
 
+import type { UserResponse, WorkspaceMemberResponse, WorkspaceResponse } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import type { UserRecord, WorkspaceRecord } from '../configuration/record-types'
 import type { WorkspaceMemberSummary } from '../database/workspace-member-queries'
-import type { UserResponse, WorkspaceMemberResponse, WorkspaceResponse } from '@ideo/shared'
 
 // ---- Builders ---------------------------------------------------------------
 
@@ -37,7 +37,9 @@ export function buildWorkspaceResponse(
 }
 
 /** Builds one member entry for the members list. */
-export function buildWorkspaceMemberResponse(memberSummary: WorkspaceMemberSummary): WorkspaceMemberResponse {
+export function buildWorkspaceMemberResponse(
+  memberSummary: WorkspaceMemberSummary,
+): WorkspaceMemberResponse {
   return {
     userId: memberSummary.userId,
     displayName: memberSummary.displayName,

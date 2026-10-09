@@ -10,4 +10,4 @@
 import { applyD1Migrations, env } from 'cloudflare:test'
 
 // ---- Setup ------------------------------------------------------------------
-await applyD1Migrations(env.DATABASE, env.TEST_D1_MIGRATIONS as Parameters<typeof applyD1Migrations>[1])
+await applyD1Migrations(env.DATABASE, env.TEST_D1_MIGRATIONS)

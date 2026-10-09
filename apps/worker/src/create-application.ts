@@ -9,15 +9,15 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { Hono } from 'hono'
-import type { EnvironmentBindings } from './configuration/environment-bindings'
 import type { AuthenticatedContextVariables } from './auth/current-user-middleware'
-import { createDefaultCurrentUserResolver } from './auth/current-user-resolver'
 import type { CurrentUserResolver } from './auth/current-user-resolver'
+import { createDefaultCurrentUserResolver } from './auth/current-user-resolver'
+import type { EnvironmentBindings } from './configuration/environment-bindings'
 import { ApiError } from './routes/api-errors'
 import { createHealthRoutes } from './routes/health-routes'
 import { createMeRoutes } from './routes/me-routes'
-import { createWorkspaceRoutes } from './routes/workspace-routes'
 import { createWorkspaceInviteRoutes } from './routes/workspace-invite-routes'
+import { createWorkspaceRoutes } from './routes/workspace-routes'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -39,7 +39,8 @@ export type ApplicationOptions = {
  * Returns the application, ready to be exported as the Worker entry point.
  */
 export function createApplication(applicationOptions: ApplicationOptions = {}): IdeoApplication {
-  const currentUserResolver = applicationOptions.currentUserResolver ?? createDefaultCurrentUserResolver()
+  const currentUserResolver =
+    applicationOptions.currentUserResolver ?? createDefaultCurrentUserResolver()
 
   const application = new Hono<{
     Bindings: EnvironmentBindings

@@ -19,6 +19,7 @@ export type NewUserInput = {
   email: string
   displayName: string
   avatarColor: string
+  createdAt: string
 }
 
 // ---- Query functions --------------------------------------------------------
@@ -27,7 +28,10 @@ export type NewUserInput = {
  * Finds a user by their email address.
  * Returns the user record, or null when no user exists for that email.
  */
-export async function findUserByEmail(database: IdeoDatabase, email: string): Promise<UserRecord | null> {
+export async function findUserByEmail(
+  database: IdeoDatabase,
+  email: string,
+): Promise<UserRecord | null> {
   const matchingRows = await database.select().from(users).where(eq(users.email, email)).limit(1)
   const matchingUser = matchingRows.at(0)
   return matchingUser ?? null
@@ -37,7 +41,10 @@ export async function findUserByEmail(database: IdeoDatabase, email: string): Pr
  * Finds a user by their id.
  * Returns the user record, or null when the id is unknown.
  */
-export async function findUserById(database: IdeoDatabase, userId: string): Promise<UserRecord | null> {
+export async function findUserById(
+  database: IdeoDatabase,
+  userId: string,
+): Promise<UserRecord | null> {
   const matchingRows = await database.select().from(users).where(eq(users.id, userId)).limit(1)
   const matchingUser = matchingRows.at(0)
   return matchingUser ?? null
@@ -48,6 +55,12 @@ export async function findUserById(database: IdeoDatabase, userId: string): Prom
  * absorbed by onConflictDoNothing instead of failing the request.
  * Returns nothing; callers re-read the row via findUserByEmail.
  */
-export async function insertUserIgnoringDuplicates(database: IdeoDatabase, newUser: NewUserInput): Promise<void> {
-  await database.insert(users).values(newUser).onConflictDoNothing({ target: [users.email] })
+export async function insertUserIgnoringDuplicates(
+  database: IdeoDatabase,
+  newUser: NewUserInput,
+): Promise<void> {
+  await database
+    .insert(users)
+    .values(newUser)
+    .onConflictDoNothing({ target: [users.email] })
 }

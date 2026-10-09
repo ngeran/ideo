@@ -8,6 +8,8 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { JoinPage } from '../features/workspaces/components/join-page'
+import { WorkspacePage } from '../features/workspaces/components/workspace-page'
 import { ApplicationShell } from './application-shell'
 import { OverviewPage } from './overview-page'
 import { SectionPlaceholderPage } from './section-placeholder-page'
@@ -79,6 +81,26 @@ const activityRoute = createRoute({
   ),
 })
 
+/** Phase 3: one workspace's home (members, invites). */
+const workspaceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/workspaces/$workspaceId',
+  component: WorkspacePage,
+})
+
+/** Phase 3: invite-link landing with an optional pre-filled code. */
+const joinRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/join',
+  validateSearch: (searchRecord: Record<string, unknown>): { code?: string } => ({
+    code:
+      typeof searchRecord.code === 'string' && searchRecord.code.length > 0
+        ? searchRecord.code
+        : undefined,
+  }),
+  component: JoinPage,
+})
+
 const routeTree = rootRoute.addChildren([
   overviewRoute,
   boardRoute,
@@ -86,6 +108,8 @@ const routeTree = rootRoute.addChildren([
   tasksRoute,
   sessionsRoute,
   activityRoute,
+  workspaceRoute,
+  joinRoute,
 ])
 
 // ---- Router instance ----------------------------------------------------------

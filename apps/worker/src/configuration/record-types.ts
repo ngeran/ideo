@@ -8,7 +8,13 @@
 
 // ---- Imports ----------------------------------------------------------------
 import type { InferSelectModel } from 'drizzle-orm'
-import type { activityEvents, users, workspaceInvites, workspaceMembers, workspaces } from '../database/drizzle-schema'
+import type {
+  activityEvents,
+  users,
+  workspaceInvites,
+  workspaceMembers,
+  workspaces,
+} from '../database/drizzle-schema'
 
 // ---- Types ------------------------------------------------------------------
 

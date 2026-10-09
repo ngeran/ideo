@@ -38,7 +38,10 @@ export type WorkspaceMemberSummary = {
  * D1 batches; joining twice stays harmless).
  * Returns the un-awaited drizzle insert statement.
  */
-export function buildInsertWorkspaceMemberStatement(database: IdeoDatabase, newMember: NewWorkspaceMemberInput) {
+export function buildInsertWorkspaceMemberStatement(
+  database: IdeoDatabase,
+  newMember: NewWorkspaceMemberInput,
+) {
   return database
     .insert(workspaceMembers)
     .values(newMember)

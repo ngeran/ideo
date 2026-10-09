@@ -18,7 +18,10 @@ export const createWorkspaceRequestSchema = z.object({
     .string()
     .trim()
     .min(1, 'Workspace name is required.')
-    .max(ENTITY_LIMITS.workspaceName, `Workspace names are at most ${ENTITY_LIMITS.workspaceName} characters.`),
+    .max(
+      ENTITY_LIMITS.workspaceName,
+      `Workspace names are at most ${ENTITY_LIMITS.workspaceName} characters.`,
+    ),
 })
 
 /** Body of POST /api/workspaces/join. Codes may be pasted with separators. */

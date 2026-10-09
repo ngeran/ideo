@@ -6,8 +6,7 @@
 // =============================================================================
 
 // ---- Imports ----------------------------------------------------------------
-import { eq } from 'drizzle-orm'
-import { sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import type { WorkspaceInviteRecord } from '../configuration/record-types'
 import type { IdeoDatabase } from './create-database'
 import { workspaceInvites } from './drizzle-schema'
@@ -33,7 +32,10 @@ export type NewWorkspaceInviteInput = {
  * collision would violate the unique index instead of silently merging.
  * Returns the un-awaited drizzle insert statement.
  */
-export function buildInsertWorkspaceInviteStatement(database: IdeoDatabase, newInvite: NewWorkspaceInviteInput) {
+export function buildInsertWorkspaceInviteStatement(
+  database: IdeoDatabase,
+  newInvite: NewWorkspaceInviteInput,
+) {
   return database.insert(workspaceInvites).values(newInvite)
 }
 

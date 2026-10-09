@@ -76,14 +76,14 @@ CREATE TABLE idea_tags (
 
 -- Lookup in the other direction: "which ideas has this user voted on" (used to
 -- render the voted state on the board without a per-idea query).
-CREATE INDEX idx_idea_votes_user ON idea_votes (user_id);
-
 CREATE TABLE idea_votes (
   idea_id TEXT NOT NULL REFERENCES ideas(id) ON DELETE CASCADE,
   user_id TEXT NOT NULL REFERENCES users(id),
   created_at TEXT NOT NULL,
   PRIMARY KEY (idea_id, user_id)
 );
+
+CREATE INDEX idx_idea_votes_user ON idea_votes (user_id);
 
 CREATE TABLE idea_comments (
   id TEXT PRIMARY KEY,
@@ -140,7 +140,7 @@ CREATE TABLE brainstorm_sessions (
   ended_at TEXT,
   created_by_user_id TEXT NOT NULL REFERENCES users(id)
 );
-CREATE INDEX idx_brainstorm_sessions_workspace ON brainstorm_sessions (workspace_id, created_at DESC);
+CREATE INDEX idx_brainstorm_sessions_workspace ON brainstorm_sessions (workspace_id, started_at DESC);
 
 CREATE TABLE activity_events (
   id TEXT PRIMARY KEY,

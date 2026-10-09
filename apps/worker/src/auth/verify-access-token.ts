@@ -34,9 +34,12 @@ export async function verifyAccessToken(
   accessTeamDomain: string,
   accessAudienceTag: string,
 ): Promise<VerifiedAccessIdentity> {
-  const teamPublicKeySet = createRemoteJWKSet(new URL(`https://${accessTeamDomain}/cdn-cgi/access/certs`), {
-    cooldownDuration: JWKS_CACHE_MAX_AGE_MS,
-  })
+  const teamPublicKeySet = createRemoteJWKSet(
+    new URL(`https://${accessTeamDomain}/cdn-cgi/access/certs`),
+    {
+      cooldownDuration: JWKS_CACHE_MAX_AGE_MS,
+    },
+  )
 
   const { payload } = await jwtVerify(accessToken, teamPublicKeySet, {
     issuer: `https://${accessTeamDomain}/access`,

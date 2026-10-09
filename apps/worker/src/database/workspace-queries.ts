@@ -28,7 +28,10 @@ export type NewWorkspaceInput = {
  * Builds the statement that inserts a workspace row (for D1 batches).
  * Returns the un-awaited drizzle insert statement.
  */
-export function buildInsertWorkspaceStatement(database: IdeoDatabase, newWorkspace: NewWorkspaceInput) {
+export function buildInsertWorkspaceStatement(
+  database: IdeoDatabase,
+  newWorkspace: NewWorkspaceInput,
+) {
   return database.insert(workspaces).values(newWorkspace)
 }
 
@@ -36,8 +39,15 @@ export function buildInsertWorkspaceStatement(database: IdeoDatabase, newWorkspa
  * Finds a workspace by id.
  * Returns the workspace record, or null when the id is unknown.
  */
-export async function findWorkspaceById(database: IdeoDatabase, workspaceId: string): Promise<WorkspaceRecord | null> {
-  const matchingRows = await database.select().from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1)
+export async function findWorkspaceById(
+  database: IdeoDatabase,
+  workspaceId: string,
+): Promise<WorkspaceRecord | null> {
+  const matchingRows = await database
+    .select()
+    .from(workspaces)
+    .where(eq(workspaces.id, workspaceId))
+    .limit(1)
   const matchingWorkspace = matchingRows.at(0)
   return matchingWorkspace ?? null
 }

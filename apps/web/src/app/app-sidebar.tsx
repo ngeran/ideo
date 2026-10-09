@@ -1,7 +1,7 @@
 // =============================================================================
 // FILE:    apps/web/src/app/app-sidebar.tsx
-// PURPOSE: Desktop navigation sidebar: logo, section links with active state,
-//          theme toggle pinned to the bottom.
+// PURPOSE: Desktop navigation sidebar: logo, workspace switcher, section links
+//          with active state, theme toggle pinned to the bottom.
 // USED BY: app/application-shell.tsx (desktop layout only)
 // =============================================================================
 
@@ -9,14 +9,9 @@
 import { Link } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 import { Lightbulb } from 'lucide-react'
+import { WorkspaceSwitcher } from '../features/workspaces/components/workspace-switcher'
 import { ThemeToggle } from '../shared/components/ui/theme-toggle'
 import { NAVIGATION_ITEMS } from './navigation-items'
-
-// ---- Types ------------------------------------------------------------------
-type AppSidebarProps = {
-  /** Workspace name shown under the logo once workspaces exist (phase 3). */
-  workspaceName: string
-}
 
 // ---- Component helpers ------------------------------------------------------
 
@@ -37,7 +32,7 @@ function SidebarLink({ label, path, Icon }: { label: string; path: string; Icon:
 // ---- Component --------------------------------------------------------------
 
 /** Fixed left sidebar for md-and-wider screens. */
-export function AppSidebar({ workspaceName }: AppSidebarProps) {
+export function AppSidebar() {
   return (
     <aside className="flex h-dvh w-60 shrink-0 flex-col gap-6 border-r border-subtle bg-card p-4">
       <Link
@@ -46,11 +41,10 @@ export function AppSidebar({ workspaceName }: AppSidebarProps) {
         aria-label="Ideo overview"
       >
         <Lightbulb className="size-6 text-accent" aria-hidden />
-        <span className="flex flex-col">
-          <span className="font-mono text-base font-semibold text-primary">Ideo</span>
-          <span className="max-w-40 truncate text-xs text-muted">{workspaceName}</span>
-        </span>
+        <span className="font-mono text-base font-semibold text-primary">Ideo</span>
       </Link>
+
+      <WorkspaceSwitcher />
 
       <nav aria-label="Primary" className="flex flex-1 flex-col gap-1">
         {NAVIGATION_ITEMS.map((navigationItem) => (

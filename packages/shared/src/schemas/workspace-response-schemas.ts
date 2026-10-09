@@ -56,6 +56,14 @@ export const workspaceInviteResponseSchema = z.object({
   maximumUses: z.number().int(),
 })
 
+/** Body of POST /api/workspaces and POST /api/workspaces/join. */
+export const workspaceMutationResponseSchema = z.object({ workspace: workspaceResponseSchema })
+
+/** Body of POST /api/workspaces/:workspaceId/invites. */
+export const workspaceInviteCreatedResponseSchema = z.object({
+  invite: workspaceInviteResponseSchema,
+})
+
 // ---- Types ------------------------------------------------------------------
 export type UserResponse = z.infer<typeof userResponseSchema>
 export type WorkspaceMemberResponse = z.infer<typeof workspaceMemberResponseSchema>
@@ -63,3 +71,5 @@ export type WorkspaceResponse = z.infer<typeof workspaceResponseSchema>
 export type WorkspaceDetailResponse = z.infer<typeof workspaceDetailResponseSchema>
 export type MeResponse = z.infer<typeof meResponseSchema>
 export type WorkspaceInviteResponse = z.infer<typeof workspaceInviteResponseSchema>
+export type WorkspaceMutationResponse = z.infer<typeof workspaceMutationResponseSchema>
+export type WorkspaceInviteCreatedResponse = z.infer<typeof workspaceInviteCreatedResponseSchema>

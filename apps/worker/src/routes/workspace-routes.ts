@@ -6,18 +6,21 @@
 // USED BY: create-application.ts (mounted at /api)
 // =============================================================================
 
+import { zValidator } from '@hono/zod-validator'
+import { createWorkspaceRequestSchema, joinWorkspaceRequestSchema } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
-import type { CurrentUserResolver } from '../auth/current-user-resolver'
-import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
 import type { AuthenticatedContext } from '../auth/current-user-middleware'
+import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
+import type { CurrentUserResolver } from '../auth/current-user-resolver'
 import { createDatabase } from '../database/create-database'
 import { listWorkspaceMembers } from '../database/workspace-member-queries'
 import { findWorkspaceForMember } from '../database/workspace-queries'
-import { createWorkspaceRequestSchema, joinWorkspaceRequestSchema } from '@ideo/shared'
-import { createWorkspaceOwnedByUser, joinWorkspaceWithInviteCode } from '../services/workspace-service'
-import { workspaceAccessDeniedError, validationFailedError } from './api-errors'
+import {
+  createWorkspaceOwnedByUser,
+  joinWorkspaceWithInviteCode,
+} from '../services/workspace-service'
+import { validationFailedError, workspaceAccessDeniedError } from './api-errors'
 import { buildWorkspaceMemberResponse, buildWorkspaceResponse } from './response-builders'
 
 // ---- Validation helpers -----------------------------------------------------
@@ -29,7 +32,9 @@ function reportZodFailure(validationResult: {
 }) {
   const failedValidation = !validationResult.success && validationResult.error !== undefined
   if (failedValidation) {
-    const failureMessages = (validationResult.error?.issues ?? []).map((issue) => issue.message).join('; ')
+    const failureMessages = (validationResult.error?.issues ?? [])
+      .map((issue) => issue.message)
+      .join('; ')
     throw validationFailedError(failureMessages)
   }
 }
@@ -43,7 +48,9 @@ function reportZodFailure(validationResult: {
  *   POST /workspaces/join         join with an invite code
  *   GET  /workspaces/:workspaceId workspace + members (members only)
  */
-export function createWorkspaceRoutes(currentUserResolver: CurrentUserResolver): Hono<AuthenticatedContext> {
+export function createWorkspaceRoutes(
+  currentUserResolver: CurrentUserResolver,
+): Hono<AuthenticatedContext> {
   const workspaceRoutes = new Hono<AuthenticatedContext>()
 
   workspaceRoutes.use('*', createCurrentUserMiddleware(currentUserResolver))
@@ -58,7 +65,10 @@ export function createWorkspaceRoutes(currentUserResolver: CurrentUserResolver):
 
       const createdWorkspace = await createWorkspaceOwnedByUser(database, currentUser, name)
 
-      return requestContext.json({ workspace: buildWorkspaceResponse(createdWorkspace, 'owner') }, 201)
+      return requestContext.json(
+        { workspace: buildWorkspaceResponse(createdWorkspace, 'owner') },
+        201,
+      )
     },
   )
 
@@ -73,7 +83,10 @@ export function createWorkspaceRoutes(currentUserResolver: CurrentUserResolver):
       const joinedWorkspace = await joinWorkspaceWithInviteCode(database, currentUser, inviteCode)
 
       // The user is now a member by definition, so their role is "member".
-      return requestContext.json({ workspace: buildWorkspaceResponse(joinedWorkspace, 'member') }, 200)
+      return requestContext.json(
+        { workspace: buildWorkspaceResponse(joinedWorkspace, 'member') },
+        200,
+      )
     },
   )
 
@@ -81,7 +94,11 @@ export function createWorkspaceRoutes(currentUserResolver: CurrentUserResolver):
     const currentUser = requestContext.get('currentUser')
     const database = createDatabase(requestContext.env.DATABASE)
 
-    const membership = await findWorkspaceForMember(database, requestContext.req.param('workspaceId'), currentUser.id)
+    const membership = await findWorkspaceForMember(
+      database,
+      requestContext.req.param('workspaceId'),
+      currentUser.id,
+    )
     // One 404 for "does not exist" and "not a member" — no information leak.
     if (!membership) throw workspaceAccessDeniedError()
 

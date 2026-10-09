@@ -12,8 +12,8 @@
 // ---- Imports ----------------------------------------------------------------
 import type { EnvironmentBindings } from '../configuration/environment-bindings'
 import type { UserRecord } from '../configuration/record-types'
-import { createDatabase } from '../database/create-database'
 import type { IdeoDatabase } from '../database/create-database'
+import { createDatabase } from '../database/create-database'
 import { findUserByEmail, insertUserIgnoringDuplicates } from '../database/user-queries'
 import { authenticationRequiredError } from '../routes/api-errors'
 import { deriveAvatarColorFromEmail, deriveDisplayNameFromEmail } from './user-profile-from-email'
@@ -25,7 +25,10 @@ import { verifyAccessToken } from './verify-access-token'
  * Resolves the current user for a request, creating the user row on first
  * sign-in. Throws ApiError(401) when the request carries no valid identity.
  */
-export type CurrentUserResolver = (request: Request, bindings: EnvironmentBindings) => Promise<UserRecord>
+export type CurrentUserResolver = (
+  request: Request,
+  bindings: EnvironmentBindings,
+) => Promise<UserRecord>
 
 // ---- Pure functions ---------------------------------------------------------
 
@@ -42,6 +45,7 @@ async function resolveUserByEmail(database: IdeoDatabase, userEmail: string): Pr
     email: userEmail,
     displayName: deriveDisplayNameFromEmail(userEmail),
     avatarColor: deriveAvatarColorFromEmail(userEmail),
+    createdAt: new Date().toISOString(),
   })
 
   // Re-read so the conflict winner (or our insert) comes back complete.
@@ -63,8 +67,16 @@ export function createDefaultCurrentUserResolver(): CurrentUserResolver {
 
     // --- 1. Cloudflare Access (production path) -----------------------------
     const accessToken = request.headers.get('Cf-Access-Jwt-Assertion')
-    if (accessToken !== null && typeof bindings.ACCESS_TEAM_DOMAIN === 'string' && typeof bindings.ACCESS_AUD === 'string') {
-      const { userEmail } = await verifyAccessToken(accessToken, bindings.ACCESS_TEAM_DOMAIN, bindings.ACCESS_AUD)
+    if (
+      accessToken !== null &&
+      typeof bindings.ACCESS_TEAM_DOMAIN === 'string' &&
+      typeof bindings.ACCESS_AUD === 'string'
+    ) {
+      const { userEmail } = await verifyAccessToken(
+        accessToken,
+        bindings.ACCESS_TEAM_DOMAIN,
+        bindings.ACCESS_AUD,
+      )
       return resolveUserByEmail(database, userEmail)
     }
 

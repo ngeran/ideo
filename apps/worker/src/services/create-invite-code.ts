@@ -22,7 +22,8 @@ export const INVITE_CODE_LENGTH = 12
  */
 export function createInviteCode(): string {
   const randomValues = crypto.getRandomValues(new Uint32Array(INVITE_CODE_LENGTH))
-  return Array.from(randomValues, (randomValue) => INVITE_CODE_ALPHABET[randomValue % INVITE_CODE_ALPHABET.length]).join(
-    '',
-  )
+  return Array.from(
+    randomValues,
+    (randomValue) => INVITE_CODE_ALPHABET[randomValue % INVITE_CODE_ALPHABET.length],
+  ).join('')
 }

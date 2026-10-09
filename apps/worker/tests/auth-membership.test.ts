@@ -8,17 +8,25 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { describe, expect, it } from 'vitest'
-import { createTestApplicationForUser, createTestApplicationWithoutIdentity, createTestUserRecord } from './test-helpers'
+import {
+  createTestApplicationForUser,
+  createTestApplicationWithoutIdentity,
+  createTestUserRecord,
+} from './test-helpers'
 
 // ---- Tests ------------------------------------------------------------------
 describe('authentication and workspace membership', () => {
   it('creates a workspace with the caller as owner', async () => {
     const ownerApplication = createTestApplicationForUser(createTestUserRecord(0))
 
-    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', { name: 'Design Lab' })
+    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', {
+      name: 'Design Lab',
+    })
 
     expect(createResponse.status).toBe(201)
-    const createdBody = (await createResponse.json()) as { workspace: { name: string; currentUserRole: string } }
+    const createdBody = (await createResponse.json()) as {
+      workspace: { name: string; currentUserRole: string }
+    }
     expect(createdBody.workspace.name).toBe('Design Lab')
     expect(createdBody.workspace.currentUserRole).toBe('owner')
   })
@@ -27,10 +35,15 @@ describe('authentication and workspace membership', () => {
     const ownerApplication = createTestApplicationForUser(createTestUserRecord(0))
     const outsiderApplication = createTestApplicationForUser(createTestUserRecord(1))
 
-    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', { name: 'Secret Plans' })
+    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', {
+      name: 'Secret Plans',
+    })
     const createdBody = (await createResponse.json()) as { workspace: { id: string } }
 
-    const outsiderResponse = await outsiderApplication.fetchAsUser(`/api/workspaces/${createdBody.workspace.id}`, 'GET')
+    const outsiderResponse = await outsiderApplication.fetchAsUser(
+      `/api/workspaces/${createdBody.workspace.id}`,
+      'GET',
+    )
 
     expect(outsiderResponse.status).toBe(404)
     const errorBody = (await outsiderResponse.json()) as { error: { code: string } }
@@ -52,10 +65,15 @@ describe('authentication and workspace membership', () => {
   it('lets members read the workspace with its member list', async () => {
     const ownerApplication = createTestApplicationForUser(createTestUserRecord(0))
 
-    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', { name: 'Open Lab' })
+    const createResponse = await ownerApplication.fetchAsUser('/api/workspaces', 'POST', {
+      name: 'Open Lab',
+    })
     const createdBody = (await createResponse.json()) as { workspace: { id: string } }
 
-    const detailResponse = await ownerApplication.fetchAsUser(`/api/workspaces/${createdBody.workspace.id}`, 'GET')
+    const detailResponse = await ownerApplication.fetchAsUser(
+      `/api/workspaces/${createdBody.workspace.id}`,
+      'GET',
+    )
 
     expect(detailResponse.status).toBe(200)
     const detailBody = (await detailResponse.json()) as {
