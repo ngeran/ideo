@@ -12,8 +12,9 @@
 // ---- Imports ----------------------------------------------------------------
 import type { EnvironmentBindings } from '../configuration/environment-bindings'
 import type { UserRecord } from '../configuration/record-types'
-import { findUserByEmail, insertUserIgnoringDuplicates } from '../database/user-queries'
+import { createDatabase } from '../database/create-database'
 import type { IdeoDatabase } from '../database/create-database'
+import { findUserByEmail, insertUserIgnoringDuplicates } from '../database/user-queries'
 import { authenticationRequiredError } from '../routes/api-errors'
 import { deriveAvatarColorFromEmail, deriveDisplayNameFromEmail } from './user-profile-from-email'
 import { verifyAccessToken } from './verify-access-token'
@@ -58,14 +59,11 @@ async function resolveUserByEmail(database: IdeoDatabase, userEmail: string): Pr
  */
 export function createDefaultCurrentUserResolver(): CurrentUserResolver {
   return async (request, bindings) => {
-    const database = bindings.DATABASE
+    const database = createDatabase(bindings.DATABASE)
 
     // --- 1. Cloudflare Access (production path) -----------------------------
     const accessToken = request.headers.get('Cf-Access-Jwt-Assertion')
-    const isAccessConfigured =
-      typeof bindings.ACCESS_TEAM_DOMAIN === 'string' && typeof bindings.ACCESS_AUD === 'string'
-
-    if (accessToken && isAccessConfigured) {
+    if (accessToken !== null && typeof bindings.ACCESS_TEAM_DOMAIN === 'string' && typeof bindings.ACCESS_AUD === 'string') {
       const { userEmail } = await verifyAccessToken(accessToken, bindings.ACCESS_TEAM_DOMAIN, bindings.ACCESS_AUD)
       return resolveUserByEmail(database, userEmail)
     }
@@ -75,7 +73,9 @@ export function createDefaultCurrentUserResolver(): CurrentUserResolver {
     // "production" in wrangler.jsonc) AND a developer-set email.
     const developmentUserEmail = bindings.DEVELOPMENT_USER_EMAIL
     const isDevelopmentMode =
-      typeof developmentUserEmail === 'string' && developmentUserEmail.length > 0 && bindings.ENVIRONMENT !== 'production'
+      typeof developmentUserEmail === 'string' &&
+      developmentUserEmail.length > 0 &&
+      bindings.ENVIRONMENT !== 'production'
 
     if (isDevelopmentMode) {
       return resolveUserByEmail(database, developmentUserEmail)

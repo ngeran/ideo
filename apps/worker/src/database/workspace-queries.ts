@@ -25,11 +25,11 @@ export type NewWorkspaceInput = {
 // ---- Query functions --------------------------------------------------------
 
 /**
- * Inserts a workspace row.
- * Returns nothing; callers pass the id they generated.
+ * Builds the statement that inserts a workspace row (for D1 batches).
+ * Returns the un-awaited drizzle insert statement.
  */
-export async function insertWorkspace(database: IdeoDatabase, newWorkspace: NewWorkspaceInput): Promise<void> {
-  await database.insert(workspaces).values(newWorkspace)
+export function buildInsertWorkspaceStatement(database: IdeoDatabase, newWorkspace: NewWorkspaceInput) {
+  return database.insert(workspaces).values(newWorkspace)
 }
 
 /**

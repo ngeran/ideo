@@ -9,10 +9,10 @@
 // ---- Imports ----------------------------------------------------------------
 import type { UserRecord, WorkspaceRecord } from '../configuration/record-types'
 import type { IdeoDatabase } from '../database/create-database'
-import { insertActivityEvent } from '../database/activity-event-queries'
-import { insertWorkspaceMemberIgnoringDuplicates } from '../database/workspace-member-queries'
-import { findWorkspaceInviteByCode, incrementInviteUseCount } from '../database/workspace-invite-queries'
-import { findWorkspaceById, insertWorkspace } from '../database/workspace-queries'
+import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
+import { buildInsertWorkspaceMemberStatement } from '../database/workspace-member-queries'
+import { findWorkspaceInviteByCode, buildIncrementInviteUseStatement } from '../database/workspace-invite-queries'
+import { buildInsertWorkspaceStatement, findWorkspaceById } from '../database/workspace-queries'
 import { inviteExhaustedError, inviteExpiredError, inviteNotFoundError } from '../routes/api-errors'
 
 // ---- Types ------------------------------------------------------------------
@@ -25,25 +25,6 @@ export type MemberRole = 'owner' | 'member'
 /** One ISO-8601 timestamp, shared by all statements in a service call. */
 function createIsoTimestamp(): string {
   return new Date().toISOString()
-}
-
-/**
- * Records that something happened, for the activity feed (Phase 9).
- * Returns the drizzle insert statement so services can batch it.
- */
-function recordActivityEvent(
-  database: IdeoDatabase,
-  eventDetails: {
-    workspaceId: string
-    actorUserId: string
-    eventType: string
-    subjectType: string
-    subjectId: string
-    summaryText: string
-    createdAt: string
-  },
-) {
-  return insertActivityEvent(database, { id: crypto.randomUUID(), ...eventDetails })
 }
 
 // ---- Services ---------------------------------------------------------------
@@ -62,14 +43,20 @@ export async function createWorkspaceOwnedByUser(
   const createdAt = createIsoTimestamp()
 
   await database.batch([
-    insertWorkspace(database, { id: workspaceId, name: workspaceName, createdByUserId: ownerUser.id, createdAt }),
-    insertWorkspaceMemberIgnoringDuplicates(database, {
+    buildInsertWorkspaceStatement(database, {
+      id: workspaceId,
+      name: workspaceName,
+      createdByUserId: ownerUser.id,
+      createdAt,
+    }),
+    buildInsertWorkspaceMemberStatement(database, {
       workspaceId,
       userId: ownerUser.id,
       memberRole: 'owner',
       joinedAt: createdAt,
     }),
-    recordActivityEvent(database, {
+    buildInsertActivityEventStatement(database, {
+      id: crypto.randomUUID(),
       workspaceId,
       actorUserId: ownerUser.id,
       eventType: 'workspace_created',
@@ -109,14 +96,15 @@ export async function joinWorkspaceWithInviteCode(
 
   const joinedAt = createIsoTimestamp()
   await database.batch([
-    insertWorkspaceMemberIgnoringDuplicates(database, {
+    buildInsertWorkspaceMemberStatement(database, {
       workspaceId: invite.workspaceId,
       userId: joiningUser.id,
       memberRole: 'member',
       joinedAt,
     }),
-    incrementInviteUseCount(database, invite.id),
-    recordActivityEvent(database, {
+    buildIncrementInviteUseStatement(database, invite.id),
+    buildInsertActivityEventStatement(database, {
+      id: crypto.randomUUID(),
       workspaceId: invite.workspaceId,
       actorUserId: joiningUser.id,
       eventType: 'member_joined',

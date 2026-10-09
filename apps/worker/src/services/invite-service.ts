@@ -9,8 +9,8 @@
 // ---- Imports ----------------------------------------------------------------
 import type { UserRecord, WorkspaceInviteRecord } from '../configuration/record-types'
 import type { IdeoDatabase } from '../database/create-database'
-import { insertActivityEvent } from '../database/activity-event-queries'
-import { insertWorkspaceInvite } from '../database/workspace-invite-queries'
+import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
+import { buildInsertWorkspaceInviteStatement } from '../database/workspace-invite-queries'
 import { createInviteCode } from './create-invite-code'
 
 // ---- Types ------------------------------------------------------------------
@@ -45,7 +45,7 @@ export async function createWorkspaceInviteForWorkspace(
   const expiresAt = new Date(createdAt.getTime() + inviteOptions.expiresInDays * MILLIS_PER_DAY)
 
   await database.batch([
-    insertWorkspaceInvite(database, {
+    buildInsertWorkspaceInviteStatement(database, {
       id: inviteId,
       workspaceId,
       inviteCode,
@@ -54,7 +54,7 @@ export async function createWorkspaceInviteForWorkspace(
       maximumUses: inviteOptions.maximumUses,
       createdAt: createdAt.toISOString(),
     }),
-    insertActivityEvent(database, {
+    buildInsertActivityEventStatement(database, {
       id: crypto.randomUUID(),
       workspaceId,
       actorUserId: invitingUser.id,

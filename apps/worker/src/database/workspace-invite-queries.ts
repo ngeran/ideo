@@ -28,16 +28,13 @@ export type NewWorkspaceInviteInput = {
 // ---- Query functions --------------------------------------------------------
 
 /**
- * Inserts an invite row. The generated code is unique (12 characters from a
- * 31-letter alphabet), and a collision would violate the unique index rather
- * than silently merge two invites.
- * Returns nothing.
+ * Builds the statement that inserts an invite row (for D1 batches). The
+ * generated code is unique (12 characters from a 31-letter alphabet); a rare
+ * collision would violate the unique index instead of silently merging.
+ * Returns the un-awaited drizzle insert statement.
  */
-export async function insertWorkspaceInvite(
-  database: IdeoDatabase,
-  newInvite: NewWorkspaceInviteInput,
-): Promise<void> {
-  await database.insert(workspaceInvites).values(newInvite)
+export function buildInsertWorkspaceInviteStatement(database: IdeoDatabase, newInvite: NewWorkspaceInviteInput) {
+  return database.insert(workspaceInvites).values(newInvite)
 }
 
 /**
@@ -59,11 +56,12 @@ export async function findWorkspaceInviteByCode(
 }
 
 /**
- * Counts one use of an invite (times_used += 1).
- * Returns nothing.
+ * Builds the statement that counts one use of an invite (times_used += 1),
+ * for D1 batches.
+ * Returns the un-awaited drizzle update statement.
  */
-export async function incrementInviteUseCount(database: IdeoDatabase, inviteId: string): Promise<void> {
-  await database
+export function buildIncrementInviteUseStatement(database: IdeoDatabase, inviteId: string) {
+  return database
     .update(workspaceInvites)
     .set({ timesUsed: sql`${workspaceInvites.timesUsed} + 1` })
     .where(eq(workspaceInvites.id, inviteId))

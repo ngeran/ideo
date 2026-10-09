@@ -12,6 +12,7 @@ import { env } from 'cloudflare:test'
 import { createApplication } from '../src/create-application'
 import type { UserRecord } from '../src/configuration/record-types'
 import type { EnvironmentBindings } from '../src/configuration/environment-bindings'
+import { authenticationRequiredError } from '../src/routes/api-errors'
 import type { AuthenticatedContext } from '../src/auth/current-user-middleware'
 
 // ---- Constants --------------------------------------------------------------
@@ -51,6 +52,34 @@ export function createTestApplicationForUser(currentUser: UserRecord) {
      * Sends a JSON request to the app, authenticated as `currentUser`.
      * Returns the raw Response (tests assert status and parsed body).
      */
+    fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
+      return application.request(
+        path,
+        {
+          method,
+          headers: jsonBody === undefined ? undefined : { 'content-type': 'application/json' },
+          body: jsonBody === undefined ? undefined : JSON.stringify(jsonBody),
+        },
+        testEnvironment,
+      )
+    },
+  }
+}
+
+/**
+ * Creates an application whose identity resolution always fails — the same
+ * code path a real request with no Access token and no dev fallback takes.
+ * Returns the same fetch helper shape as createTestApplicationForUser.
+ */
+export function createTestApplicationWithoutIdentity() {
+  const application = createApplication({
+    currentUserResolver: async () => {
+      throw authenticationRequiredError()
+    },
+  })
+  const testEnvironment = env as unknown as EnvironmentBindings
+
+  return {
     fetchAsUser(path: string, method: 'GET' | 'POST', jsonBody?: unknown): Promise<Response> {
       return application.request(
         path,

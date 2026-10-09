@@ -49,5 +49,5 @@ export async function findUserById(database: IdeoDatabase, userId: string): Prom
  * Returns nothing; callers re-read the row via findUserByEmail.
  */
 export async function insertUserIgnoringDuplicates(database: IdeoDatabase, newUser: NewUserInput): Promise<void> {
-  await database.insert(users).values(newUser).onConflictDoNothing({ target: users.email })
+  await database.insert(users).values(newUser).onConflictDoNothing({ target: [users.email] })
 }

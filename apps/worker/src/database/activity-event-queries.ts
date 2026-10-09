@@ -27,12 +27,13 @@ export type NewActivityEventInput = {
 // ---- Query functions --------------------------------------------------------
 
 /**
- * Inserts one activity event row.
- * Returns nothing; failure to record must surface as a failed request so the
- * feed never silently diverges from reality.
+ * Builds the statement that inserts one activity event row (for D1 batches).
+ * Recording is part of every mutation's transaction, so the feed can never
+ * silently diverge from reality.
+ * Returns the un-awaited drizzle insert statement.
  */
-export async function insertActivityEvent(database: IdeoDatabase, newEvent: NewActivityEventInput): Promise<void> {
-  await database.insert(activityEvents).values(newEvent)
+export function buildInsertActivityEventStatement(database: IdeoDatabase, newEvent: NewActivityEventInput) {
+  return database.insert(activityEvents).values(newEvent)
 }
 
 /**

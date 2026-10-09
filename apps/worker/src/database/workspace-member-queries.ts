@@ -34,14 +34,12 @@ export type WorkspaceMemberSummary = {
 // ---- Query functions --------------------------------------------------------
 
 /**
- * Inserts a member row, ignoring a duplicate membership (join twice is fine).
- * Returns nothing.
+ * Builds the statement that inserts a member row, ignoring duplicates (for
+ * D1 batches; joining twice stays harmless).
+ * Returns the un-awaited drizzle insert statement.
  */
-export async function insertWorkspaceMemberIgnoringDuplicates(
-  database: IdeoDatabase,
-  newMember: NewWorkspaceMemberInput,
-): Promise<void> {
-  await database
+export function buildInsertWorkspaceMemberStatement(database: IdeoDatabase, newMember: NewWorkspaceMemberInput) {
+  return database
     .insert(workspaceMembers)
     .values(newMember)
     .onConflictDoNothing({ target: [workspaceMembers.workspaceId, workspaceMembers.userId] })

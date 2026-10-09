@@ -25,6 +25,9 @@ const AVATAR_COLOR_PALETTE = [
   '#4d7c0f',
 ] as const
 
+/** Used if the palette lookup ever comes back empty (cannot happen today). */
+const DEFAULT_AVATAR_COLOR: string = '#0e7490'
+
 // ---- Pure functions ---------------------------------------------------------
 
 /**
@@ -51,5 +54,5 @@ export function deriveDisplayNameFromEmail(email: string): string {
  */
 export function deriveAvatarColorFromEmail(email: string): string {
   const emailCharCodeSum = [...email].reduce((sum, character) => sum + character.charCodeAt(0), 0)
-  return AVATAR_COLOR_PALETTE[emailCharCodeSum % AVATAR_COLOR_PALETTE.length]
+  return AVATAR_COLOR_PALETTE[emailCharCodeSum % AVATAR_COLOR_PALETTE.length] ?? DEFAULT_AVATAR_COLOR
 }
