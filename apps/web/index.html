@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover lets the installed PWA draw under safe-area insets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f8f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Ideo — a private space for your team's ideas, brainstorms, plans, and tasks." />
+    <title>Ideo</title>
+    <script>
+      // Applies the saved theme before first paint so there is no flash of the
+      // wrong theme on reload. MUST stay in sync with shared/lib/theme-storage.ts
+      // (same storage key and resolution rules).
+      ;(function applyThemeBeforePaint() {
+        try {
+          var savedChoice = localStorage.getItem('ideo-theme')
+          var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          var shouldUseDark =
+            savedChoice === 'dark' || ((savedChoice === null || savedChoice === 'system') && systemPrefersDark)
+          document.documentElement.classList.toggle('dark', shouldUseDark)
+          document.documentElement.style.colorScheme = shouldUseDark ? 'dark' : 'light'
+        } catch (error) {
+          // Private-browsing storage restrictions should never break the app.
+          console.warn('Could not apply the saved theme before paint', error)
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="application-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

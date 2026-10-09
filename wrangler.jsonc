@@ -1,0 +1,52 @@
+// =============================================================================
+// FILE:    wrangler.jsonc
+// PURPOSE: Cloudflare Workers configuration — one Worker serving the built web
+//          app (static assets) plus the API and WebSocket routes.
+// USED BY: `wrangler dev` (local), `wrangler deploy` (production), CI dry-run,
+//          and the Vitest Workers pool (tests read this same config).
+// =============================================================================
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ideo",
+  "main": "apps/worker/src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // The Worker serves the built single-page app from apps/web/dist.
+  // "run_worker_first" is critical: without it the SPA fallback would answer
+  // /api and /ws requests with index.html instead of reaching the Worker.
+  "assets": {
+    "directory": "./apps/web/dist",
+    "binding": "STATIC_ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/ws/*"]
+  },
+
+  // Create with: npx wrangler d1 create ideo-database
+  // then paste the printed database_id below. See docs/deployment.md.
+  "d1_databases": [
+    {
+      "binding": "DATABASE",
+      "database_name": "ideo-database",
+      "database_id": "REPLACE_WITH_ID_FROM_wrangler_d1_create",
+      "migrations_dir": "apps/worker/migrations"
+    }
+  ],
+
+  // Realtime (added in the realtime phase, when the Durable Object classes
+  // exist in apps/worker/src/realtime — Wrangler validates that bound classes
+  // are exported by the Worker, so the bindings ship with the code):
+  // "durable_objects": {
+  //   "bindings": [
+  //     { "name": "WORKSPACE_ROOM", "class_name": "WorkspaceRoom" },
+  //     { "name": "PLAN_DOCUMENT_ROOM", "class_name": "PlanDocumentRoom" }
+  //   ]
+  // },
+  // "migrations": [
+  //   { "tag": "v1", "new_sqlite_classes": ["WorkspaceRoom", "PlanDocumentRoom"] }
+  // ],
+
+  "observability": {
+    "enabled": true
+  }
+}

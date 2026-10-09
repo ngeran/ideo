@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Worker runtime types plus the ambient "cloudflare:test" module used by
+    // tests running in the Cloudflare Vitest plugin.
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin/types"]
+  },
+  "include": ["src", "tests", "vitest.config.ts"]
+}

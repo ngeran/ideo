@@ -1,0 +1,123 @@
+/* =============================================================================
+   FILE:    apps/web/src/shared/styles/global.css
+   PURPOSE: Single source of truth for the Ideo design system: semantic design
+            tokens for both themes, wired into Tailwind v4 so utilities like
+            `bg-page` and `text-muted` adapt to the active theme automatically.
+   USED BY: apps/web/src/main.tsx (imported once), every component
+   ============================================================================= */
+
+@import 'tailwindcss';
+
+/* Dark mode is class-based: the `dark` class on <html> is applied before first
+   paint by the inline script in index.html and kept in sync by ThemeProvider. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Light theme (default): soft off-white with a darker teal accent ------ */
+:root {
+  --surface-page: #f6f8f9;
+  --surface-card: #ffffff;
+  --surface-sunken: #eef2f4;
+  --border-subtle: #dde3e7;
+  --text-primary: #0f1a1f;
+  --text-muted: #5b6b75;
+  --accent: #007a80; /* 5.1:1 on white — verified, see docs/architecture.md */
+  --accent-contrast: #ffffff;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #c62828;
+
+  /* Pipeline stage colors (badge accents — always paired with a text label) */
+  --stage-spark: #b45309;
+  --stage-shaping: #1d4ed8;
+  --stage-validated: #007a80;
+  --stage-planned: #6d28d9;
+  --stage-launched: #15803d;
+
+  /* The one radius setting. Set to 0 for a sharp, HUD-style look. */
+  --radius-control: 0.5rem;
+
+  color-scheme: light;
+}
+
+/* ---- Dark theme: true black for OLED screens, teal signature accent ------- */
+.dark {
+  --surface-page: #000000;
+  --surface-card: #0a0d10;
+  --surface-sunken: #11161b;
+  --border-subtle: #1f2933;
+  --text-primary: #e6edf3;
+  --text-muted: #8b98a5;
+  --accent: #00dce5;
+  --accent-contrast: #001a1c;
+  --success: #22c55e;
+  --warning: #f5a524;
+  --danger: #ff4c4c;
+
+  --stage-spark: #fbbf24;
+  --stage-shaping: #60a5fa;
+  --stage-validated: #00dce5;
+  --stage-planned: #a78bfa;
+  --stage-launched: #22c55e;
+
+  color-scheme: dark;
+}
+
+/* ---- Wire tokens into Tailwind utilities ----------------------------------
+   `inline` makes utilities reference the variables above directly, so
+   switching the .dark class swaps every utility's value instantly. */
+@theme inline {
+  --color-page: var(--surface-page);
+  --color-card: var(--surface-card);
+  --color-sunken: var(--surface-sunken);
+  --color-subtle: var(--border-subtle);
+  --color-primary: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-stage-spark: var(--stage-spark);
+  --color-stage-shaping: var(--stage-shaping);
+  --color-stage-validated: var(--stage-validated);
+  --color-stage-planned: var(--stage-planned);
+  --color-stage-launched: var(--stage-launched);
+  --radius-control: var(--radius-control);
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+}
+
+/* ---- Base element styles --------------------------------------------------- */
+@layer base {
+  body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  }
+}
+
+/* ---- Respect reduced-motion preferences -----------------------------------
+   Motion stays subtle everywhere (150–200 ms), and users who ask for less
+   motion get none at all. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Utilities -------------------------------------------------------------- */
+
+/* Lets the PWA draw under the iOS/Android home-indicator bar safely. */
+@utility pb-safe-area {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}

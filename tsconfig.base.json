@@ -1,0 +1,25 @@
+{
+  // Shared compiler options for every package. Packages extend this file and
+  // add what their runtime needs (DOM types for the web app, workers types for
+  // the worker). "noEmit" is the default because nothing here emits: Vite
+  // builds the web app, Wrangler bundles the worker, and packages/shared is
+  // consumed as TypeScript source.
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  }
+}

@@ -1,0 +1,23 @@
+# --- Dependencies ---
+node_modules/
+
+# --- Build output ---
+dist/
+*.tsbuildinfo
+
+# --- Cloudflare local state ---
+.wrangler/
+
+# --- Secrets: never commit these ---
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# --- Test artifacts ---
+coverage/
+playwright-report/
+test-results/
+
+# --- Editors and OS ---
+.DS_Store
+.idea/

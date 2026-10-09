@@ -1,0 +1,19 @@
+# Defines the pnpm workspace packages and allows the native-module
+# postinstall scripts that Cloudflare tooling needs to run.
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm 10+ blocks lifecycle scripts by default; wrangler's local runtime
+# (workerd) and its file watcher need theirs to work.
+minimumReleaseAgeExclude:
+  - "@cloudflare/workers-types@5.20261009.1"
+  - miniflare@5.20261006.1-alpha
+  - vite@8.3.4
+  - wrangler@4.149.0
+  - "@cloudflare/vitest-plugin@1.4.0"
+
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
+  - "@parcel/watcher"

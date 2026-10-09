@@ -1,0 +1,19 @@
+{
+  "name": "@ideo/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Schemas, constants, and pure functions shared by the Ideo web app and Worker.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
