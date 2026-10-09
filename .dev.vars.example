@@ -1,0 +1,21 @@
+# =============================================================================
+# FILE:    .dev.vars.example
+# PURPOSE: Template for local development secrets. Copy to `.dev.vars`
+#          (gitignored) and adjust. Never commit the real file.
+# USED BY: `wrangler dev` loads it as environment variables.
+# =============================================================================
+
+# Marks the local Worker as non-production. This is what makes the dev
+# identity fallback below legal — production always runs with
+# ENVIRONMENT="production" from wrangler.jsonc.
+ENVIRONMENT=development
+
+# Your local identity: every request is attributed to this email, and a user
+# row is created on first use. Change it to anything you like.
+DEVELOPMENT_USER_EMAIL=you@example.com
+
+# --- Optional: test against a real Cloudflare Access setup locally ---
+# When both are set, the Worker verifies real Access JWTs instead of using
+# the dev identity above (delete DEVELOPMENT_USER_EMAIL first).
+# ACCESS_TEAM_DOMAIN=myteam.cloudflareaccess.com
+# ACCESS_AUD=<the application AUD tag from the Access dashboard>
