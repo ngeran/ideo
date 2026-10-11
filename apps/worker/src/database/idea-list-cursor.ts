@@ -21,7 +21,10 @@ export type IdeaListCursor =
  * Returns an opaque string safe to hand to clients.
  */
 export function encodeKeysetCursor(lastCreatedAt: string, lastIdeaId: string): string {
-  return Buffer.from(JSON.stringify({ k: 'keyset', t: lastCreatedAt, i: lastIdeaId }), 'utf8').toString('base64url')
+  return Buffer.from(
+    JSON.stringify({ k: 'keyset', t: lastCreatedAt, i: lastIdeaId }),
+    'utf8',
+  ).toString('base64url')
 }
 
 /**
@@ -41,12 +44,20 @@ export function decodeIdeaListCursor(cursorText: string | undefined): IdeaListCu
   if (cursorText === undefined) return null
 
   try {
-    const parsedRecord = JSON.parse(Buffer.from(cursorText, 'base64url').toString('utf8')) as Record<string, unknown>
+    const parsedRecord = JSON.parse(
+      Buffer.from(cursorText, 'base64url').toString('utf8'),
+    ) as Record<string, unknown>
 
     const isKeysetCursor =
-      parsedRecord.k === 'keyset' && typeof parsedRecord.t === 'string' && typeof parsedRecord.i === 'string'
+      parsedRecord.k === 'keyset' &&
+      typeof parsedRecord.t === 'string' &&
+      typeof parsedRecord.i === 'string'
     if (isKeysetCursor) {
-      return { kind: 'keyset', lastCreatedAt: parsedRecord.t as string, lastIdeaId: parsedRecord.i as string }
+      return {
+        kind: 'keyset',
+        lastCreatedAt: parsedRecord.t as string,
+        lastIdeaId: parsedRecord.i as string,
+      }
     }
 
     const isOffsetCursor =

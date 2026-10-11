@@ -88,8 +88,13 @@ export function WorkspacePage() {
 
       <EmptyState
         icon={Lightbulb}
-        title="The idea board arrives in Phase 4"
-        description="Cards with tags, stages, voting, and live comments will live here."
+        title="Ideas live on the board"
+        description="Cards with tags, stages, voting, and comments — one board for the whole workspace."
+        action={
+          <Button renderAsChild>
+            <Link to="/board">Open the idea board</Link>
+          </Button>
+        }
       />
 
       <InviteDialog

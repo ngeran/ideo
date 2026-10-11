@@ -46,7 +46,10 @@ export function DrawerContent({
 }
 
 /** The drawer's accessible title. */
-export function DrawerTitle({ className, ...titleProps }: ComponentProps<typeof DialogPrimitive.Title>) {
+export function DrawerTitle({
+  className,
+  ...titleProps
+}: ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
       className={mergeComponentClasses('pr-8 text-base font-semibold text-primary', className)}

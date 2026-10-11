@@ -6,9 +6,9 @@
 // USED BY: idea composer, drawer, cards
 // =============================================================================
 
+import type { CreateIdeaRequest, UpdateIdeaRequest } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type { CreateIdeaRequest, UpdateIdeaRequest } from '@ideo/shared'
 import { toast } from 'sonner'
 import { ApiRequestError } from '../../../shared/lib/api-client'
 import {
@@ -63,7 +63,8 @@ export function useUpdateIdea() {
       await queryClient.invalidateQueries({ queryKey: [IDEA_LIST_QUERY_KEY_PREFIX] })
       await queryClient.invalidateQueries({ queryKey: [IDEA_DETAIL_QUERY_KEY_PREFIX] })
     },
-    onError: (mutationError) => reportIdeaMutationFailure('Could not update the idea', mutationError),
+    onError: (mutationError) =>
+      reportIdeaMutationFailure('Could not update the idea', mutationError),
   })
 }
 
@@ -82,23 +83,29 @@ export function useToggleIdeaVote(ideaId: string) {
       await queryClient.cancelQueries({ queryKey: [IDEA_LIST_QUERY_KEY_PREFIX] })
       await queryClient.cancelQueries({ queryKey: [IDEA_DETAIL_QUERY_KEY_PREFIX, ideaId] })
 
-      queryClient.setQueriesData<{ ideas: Array<{ id: string; hasVotedByCurrentUser: boolean; voteCount: number }> }>(
-        { queryKey: [IDEA_LIST_QUERY_KEY_PREFIX] },
-        (cachedPage) =>
-          cachedPage === undefined
-            ? undefined
-            : {
+      queryClient.setQueriesData<{
+        pages: Array<{
+          ideas: Array<{ id: string; hasVotedByCurrentUser: boolean; voteCount: number }>
+        }>
+      }>({ queryKey: [IDEA_LIST_QUERY_KEY_PREFIX] }, (cachedList) =>
+        cachedList === undefined
+          ? undefined
+          : {
+              ...cachedList,
+              pages: cachedList.pages.map((cachedPage) => ({
                 ...cachedPage,
                 ideas: cachedPage.ideas.map((listedIdea) =>
                   listedIdea.id === ideaId
                     ? {
                         ...listedIdea,
                         hasVotedByCurrentUser: !listedIdea.hasVotedByCurrentUser,
-                        voteCount: listedIdea.voteCount + (listedIdea.hasVotedByCurrentUser ? -1 : 1),
+                        voteCount:
+                          listedIdea.voteCount + (listedIdea.hasVotedByCurrentUser ? -1 : 1),
                       }
                     : listedIdea,
                 ),
-              },
+              })),
+            },
       )
     },
     onError: (mutationError) => {
@@ -126,6 +133,7 @@ export function useAddIdeaComment(ideaId: string, onCommented: () => void) {
       await queryClient.invalidateQueries({ queryKey: [IDEA_LIST_QUERY_KEY_PREFIX] })
       onCommented()
     },
-    onError: (mutationError) => reportIdeaMutationFailure('Could not post the comment', mutationError),
+    onError: (mutationError) =>
+      reportIdeaMutationFailure('Could not post the comment', mutationError),
   })
 }

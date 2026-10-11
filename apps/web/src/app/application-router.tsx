@@ -8,6 +8,7 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { IdeaBoardPage } from '../features/ideas/components/idea-board-page'
 import { JoinPage } from '../features/workspaces/components/join-page'
 import { WorkspacePage } from '../features/workspaces/components/workspace-page'
 import { ApplicationShell } from './application-shell'
@@ -25,16 +26,11 @@ const overviewRoute = createRoute({
   component: OverviewPage,
 })
 
-/** Placeholder sections, one per feature phase still to come. */
+/** Phase 4: the idea board (cards, voting, comments, ICE scoring, stages). */
 const boardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/board',
-  component: () => (
-    <SectionPlaceholderPage
-      title="Idea board"
-      description="Cards with tags, stages, voting, and comments — all live. Lands in Phase 4."
-    />
-  ),
+  component: IdeaBoardPage,
 })
 
 const plansRoute = createRoute({

@@ -7,13 +7,13 @@
 // USED BY: services/idea-service.ts (listIdeasForWorkspace)
 // =============================================================================
 
+import type { IdeaSortValue } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { and, desc, eq, lt, or, sql } from 'drizzle-orm'
+import type { IdeaRecord } from '../configuration/record-types'
 import { ideas, users } from '../database/drizzle-schema'
 import type { IdeoDatabase } from './create-database'
-import type { IdeaRecord } from '../configuration/record-types'
 import { decodeIdeaListCursor, encodeKeysetCursor, encodeOffsetCursor } from './idea-list-cursor'
-import type { IdeaSortValue } from '@ideo/shared'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -99,12 +99,14 @@ export async function listIdeasForWorkspace(
   if (sort === 'newest') {
     const decodedCursor = decodeIdeaListCursor(cursor)
     if (decodedCursor?.kind === 'keyset') {
-      baseConditions.push(
-        or(
-          lt(ideas.createdAt, decodedCursor.lastCreatedAt),
-          and(eq(ideas.createdAt, decodedCursor.lastCreatedAt), lt(ideas.id, decodedCursor.lastIdeaId)),
-        )!,
+      const cursorBoundary = or(
+        lt(ideas.createdAt, decodedCursor.lastCreatedAt),
+        and(
+          eq(ideas.createdAt, decodedCursor.lastCreatedAt),
+          lt(ideas.id, decodedCursor.lastIdeaId),
+        ),
       )
+      if (cursorBoundary !== undefined) baseConditions.push(cursorBoundary)
     }
     listRows = await database
       .select(selection)

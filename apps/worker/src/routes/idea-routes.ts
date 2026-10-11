@@ -6,12 +6,7 @@
 // USED BY: create-application.ts (mounted at /api)
 // =============================================================================
 
-// ---- Imports ----------------------------------------------------------------
-import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
-import type { CurrentUserResolver } from '../auth/current-user-resolver'
-import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
-import type { AuthenticatedContext } from '../auth/current-user-middleware'
 import {
   createIdeaCommentRequestSchema,
   createIdeaRequestSchema,
@@ -20,6 +15,11 @@ import {
   ideaListResponseSchema,
   updateIdeaRequestSchema,
 } from '@ideo/shared'
+// ---- Imports ----------------------------------------------------------------
+import { Hono } from 'hono'
+import type { AuthenticatedContext } from '../auth/current-user-middleware'
+import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
+import type { CurrentUserResolver } from '../auth/current-user-resolver'
 import { createDatabase } from '../database/create-database'
 import {
   addIdeaCommentForMember,
@@ -40,7 +40,9 @@ function reportZodFailure(validationResult: {
 }) {
   const failedValidation = !validationResult.success && validationResult.error !== undefined
   if (failedValidation) {
-    const failureMessages = (validationResult.error?.issues ?? []).map((issue) => issue.message).join('; ')
+    const failureMessages = (validationResult.error?.issues ?? [])
+      .map((issue) => issue.message)
+      .join('; ')
     throw validationFailedError(failureMessages)
   }
 }
@@ -57,7 +59,9 @@ function reportZodFailure(validationResult: {
  *   POST  /ideas/:ideaId/vote               toggle the caller's vote
  *   POST  /ideas/:ideaId/comments           add a comment
  */
-export function createIdeaRoutes(currentUserResolver: CurrentUserResolver): Hono<AuthenticatedContext> {
+export function createIdeaRoutes(
+  currentUserResolver: CurrentUserResolver,
+): Hono<AuthenticatedContext> {
   const ideaRoutes = new Hono<AuthenticatedContext>()
 
   ideaRoutes.use('*', createCurrentUserMiddleware(currentUserResolver))
@@ -102,7 +106,11 @@ export function createIdeaRoutes(currentUserResolver: CurrentUserResolver): Hono
     const currentUser = requestContext.get('currentUser')
     const database = createDatabase(requestContext.env.DATABASE)
 
-    const detailResponse = await getIdeaDetailForMember(database, currentUser, requestContext.req.param('ideaId'))
+    const detailResponse = await getIdeaDetailForMember(
+      database,
+      currentUser,
+      requestContext.req.param('ideaId'),
+    )
     return requestContext.json(ideaDetailResponseSchema.parse(detailResponse))
   })
 
@@ -114,7 +122,12 @@ export function createIdeaRoutes(currentUserResolver: CurrentUserResolver): Hono
       const updateRequest = requestContext.req.valid('json')
       const database = createDatabase(requestContext.env.DATABASE)
 
-      await updateIdeaForWorkspace(database, currentUser, requestContext.req.param('ideaId'), updateRequest)
+      await updateIdeaForWorkspace(
+        database,
+        currentUser,
+        requestContext.req.param('ideaId'),
+        updateRequest,
+      )
       return requestContext.json({ ok: true })
     },
   )
@@ -123,7 +136,11 @@ export function createIdeaRoutes(currentUserResolver: CurrentUserResolver): Hono
     const currentUser = requestContext.get('currentUser')
     const database = createDatabase(requestContext.env.DATABASE)
 
-    const isNowVoted = await toggleIdeaVoteForMember(database, currentUser, requestContext.req.param('ideaId'))
+    const isNowVoted = await toggleIdeaVoteForMember(
+      database,
+      currentUser,
+      requestContext.req.param('ideaId'),
+    )
     return requestContext.json({ isVotedByCurrentUser: isNowVoted })
   })
 
@@ -135,7 +152,12 @@ export function createIdeaRoutes(currentUserResolver: CurrentUserResolver): Hono
       const { commentText } = requestContext.req.valid('json')
       const database = createDatabase(requestContext.env.DATABASE)
 
-      const commentId = await addIdeaCommentForMember(database, currentUser, requestContext.req.param('ideaId'), commentText)
+      const commentId = await addIdeaCommentForMember(
+        database,
+        currentUser,
+        requestContext.req.param('ideaId'),
+        commentText,
+      )
       return requestContext.json({ commentId }, 201)
     },
   )

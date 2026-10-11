@@ -40,11 +40,15 @@ export type IdeaListParameters = {
 // ---- Requests ---------------------------------------------------------------
 
 /** Fetches one page of the board for a workspace. */
-export function fetchIdeaList(workspaceId: string, listParameters: IdeaListParameters): Promise<IdeaListResponse> {
+export function fetchIdeaList(
+  workspaceId: string,
+  listParameters: IdeaListParameters,
+): Promise<IdeaListResponse> {
   const searchParameters = new URLSearchParams({ sort: listParameters.sort })
   if (listParameters.stage !== undefined) searchParameters.set('stage', listParameters.stage)
   if (listParameters.cursor !== undefined) searchParameters.set('cursor', listParameters.cursor)
-  if (listParameters.limit !== undefined) searchParameters.set('limit', String(listParameters.limit))
+  if (listParameters.limit !== undefined)
+    searchParameters.set('limit', String(listParameters.limit))
 
   return requestFromApi(`/api/workspaces/${workspaceId}/ideas?${searchParameters.toString()}`, {
     method: 'GET',
@@ -54,7 +58,10 @@ export function fetchIdeaList(workspaceId: string, listParameters: IdeaListParam
 
 /** Fetches one idea with its comments (for the drawer). */
 export function fetchIdeaDetail(ideaId: string): Promise<IdeaDetailResponse> {
-  return requestFromApi(`/api/ideas/${ideaId}`, { method: 'GET', responseSchema: ideaDetailResponseSchema })
+  return requestFromApi(`/api/ideas/${ideaId}`, {
+    method: 'GET',
+    responseSchema: ideaDetailResponseSchema,
+  })
 }
 
 /** Creates an idea in a workspace (it starts in the spark stage). */

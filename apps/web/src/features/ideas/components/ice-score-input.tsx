@@ -1,14 +1,15 @@
 // =============================================================================
 // FILE:    apps/web/src/features/ideas/components/ice-score-input.tsx
 // PURPOSE: The three ICE sliders (Impact, Confidence, Ease) with a live
-//          preview of the computed score. Saving happens on release, so
-//          dragging stays cheap and the server sees settled values.
+//          preview of the computed score. Dragging updates a local draft;
+//          the server only sees the settled value on release, so one drag is
+//          one request instead of one per pixel.
 // USED BY: idea-detail-drawer.tsx
 // =============================================================================
 
-// ---- Imports ----------------------------------------------------------------
-import type { ReactNode } from 'react'
 import { calculateIceScore } from '@ideo/shared'
+// ---- Imports ----------------------------------------------------------------
+import { useState } from 'react'
 import { useUpdateIdea } from '../hooks/use-idea-mutations'
 
 // ---- Types ------------------------------------------------------------------
@@ -19,36 +20,60 @@ type IceScoreInputProps = {
   easeScore: number | null
 }
 
+/** The names of the three score fields, as the update API expects them. */
+type IceScoreField = 'impactScore' | 'confidenceScore' | 'easeScore'
+
 // ---- Constants --------------------------------------------------------------
 
 /** The three sliders, in display order, with their field names. */
-const ICE_DIMENSIONS = [
+const ICE_DIMENSIONS: Array<{ field: IceScoreField; label: string; description: string }> = [
   { field: 'impactScore', label: 'Impact', description: 'How much difference would it make?' },
   { field: 'confidenceScore', label: 'Confidence', description: 'How sure are we it will work?' },
   { field: 'easeScore', label: 'Ease', description: 'How cheap is it to try?' },
-] as const
+]
 
 // ---- Component --------------------------------------------------------------
 
 /**
  * Renders the three ICE sliders and the computed score.
- * Each slider saves on release (`onChange` during drag, commit on mouseup).
+ * While dragging, changes stay in a local draft; releasing the slider (mouse,
+ * touch, or keyboard) commits one update request with the settled value.
  */
-export function IceScoreInput({ ideaId, impactScore, confidenceScore, easeScore }: IceScoreInputProps) {
+export function IceScoreInput({
+  ideaId,
+  impactScore,
+  confidenceScore,
+  easeScore,
+}: IceScoreInputProps) {
   const updateIdea = useUpdateIdea()
+  const [draftedScores, setDraftedScores] = useState<Partial<Record<IceScoreField, number>>>({})
 
-  const currentScores = { impactScore, confidenceScore, easeScore }
-  const computedIceScore = calculateIceScore(currentScores)
+  const settledScores: Record<IceScoreField, number | null> = {
+    impactScore,
+    confidenceScore,
+    easeScore,
+  }
+  /** What the sliders show: the draft value when one is mid-drag, else the server value. */
+  const displayedScores = { ...settledScores, ...draftedScores }
+  const displayedIceScore = calculateIceScore(displayedScores)
 
-  function saveScores(scoreField: keyof typeof currentScores, scoreValue: number) {
-    if (updateIdea.isPending) return
-    updateIdea.mutate({ ideaId, updateFields: { [scoreField]: scoreValue } })
+  /** Moves the draft while the slider is held down; nothing is sent yet. */
+  function draftScore(scoreField: IceScoreField, scoreValue: number) {
+    setDraftedScores((previousDrafts) => ({ ...previousDrafts, [scoreField]: scoreValue }))
+  }
+
+  /** Sends the settled value once per release and clears that slider's draft. */
+  function commitScore(scoreField: IceScoreField, scoreValue: number) {
+    setDraftedScores(({ [scoreField]: _settledDraft, ...remainingDrafts }) => remainingDrafts)
+    if (settledScores[scoreField] !== scoreValue && !updateIdea.isPending) {
+      updateIdea.mutate({ ideaId, updateFields: { [scoreField]: scoreValue } })
+    }
   }
 
   return (
     <div className="flex flex-col gap-3">
       {ICE_DIMENSIONS.map(({ field, label, description }) => {
-        const dimensionScore = currentScores[field] ?? 5
+        const dimensionScore = displayedScores[field] ?? 5
         return (
           <label key={field} className="flex flex-col gap-1" title={description}>
             <span className="flex items-center justify-between text-sm">
@@ -61,8 +86,14 @@ export function IceScoreInput({ ideaId, impactScore, confidenceScore, easeScore 
               max={10}
               step={1}
               value={dimensionScore}
-              onChange={(changeEvent) => saveScores(field, Number(changeEvent.target.value))}
+              onChange={(changeEvent) => draftScore(field, Number(changeEvent.target.value))}
+              onPointerUp={(pointerEvent) =>
+                commitScore(field, Number(pointerEvent.currentTarget.value))
+              }
+              onKeyUp={(keyEvent) => commitScore(field, Number(keyEvent.currentTarget.value))}
+              onBlur={(blurEvent) => commitScore(field, Number(blurEvent.currentTarget.value))}
               aria-label={`${label} score`}
+              aria-valuetext={`${dimensionScore} out of 10`}
               className="h-1.5 w-full cursor-pointer accent-[var(--accent)]"
             />
           </label>
@@ -71,8 +102,8 @@ export function IceScoreInput({ ideaId, impactScore, confidenceScore, easeScore 
 
       <p className="text-sm text-muted">
         ICE score:{' '}
-        {computedIceScore !== null ? (
-          <span className="font-mono font-semibold text-accent">{computedIceScore}</span>
+        {displayedIceScore !== null ? (
+          <span className="font-mono font-semibold text-accent">{displayedIceScore}</span>
         ) : (
           'set all three to rank this idea'
         )}
@@ -81,6 +112,3 @@ export function IceScoreInput({ ideaId, impactScore, confidenceScore, easeScore 
     </div>
   )
 }
-
-/** Keeps ReactNode import used if the file grows grouped rows later. */
-export type { ReactNode as IceScoreInputNode }

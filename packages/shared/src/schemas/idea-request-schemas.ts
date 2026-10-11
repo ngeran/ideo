@@ -18,12 +18,7 @@ export const IDEA_SORT_VALUES = ['newest', 'most_voted', 'best_ice'] as const
 export type IdeaSort = (typeof IDEA_SORT_VALUES)[number]
 
 /** One normalized tag: trimmed, lowercased, no separators overflow. */
-const ideaTagSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .min(1)
-  .max(ENTITY_LIMITS.ideaTag)
+const ideaTagSchema = z.string().trim().toLowerCase().min(1).max(ENTITY_LIMITS.ideaTag)
 
 /** Query string of GET /api/workspaces/:workspaceId/ideas. */
 export const ideaListQuerySchema = cursorPaginationQuerySchema.extend({
@@ -63,7 +58,10 @@ export const createIdeaCommentRequestSchema = z.object({
     .string()
     .trim()
     .min(1, 'Write a comment first.')
-    .max(ENTITY_LIMITS.commentText, `Comments are at most ${ENTITY_LIMITS.commentText} characters.`),
+    .max(
+      ENTITY_LIMITS.commentText,
+      `Comments are at most ${ENTITY_LIMITS.commentText} characters.`,
+    ),
 })
 
 // ---- Types ------------------------------------------------------------------

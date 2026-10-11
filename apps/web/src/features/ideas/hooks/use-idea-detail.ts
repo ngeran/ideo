@@ -22,7 +22,11 @@ export const IDEA_DETAIL_QUERY_KEY_PREFIX = 'idea'
 export function useIdeaDetail(ideaId: string | null) {
   return useQuery({
     queryKey: [IDEA_DETAIL_QUERY_KEY_PREFIX, ideaId],
-    queryFn: () => fetchIdeaDetail(ideaId),
+    queryFn: () => {
+      // The query is disabled while ideaId is null; this guard keeps types honest.
+      if (ideaId === null) throw new Error('Cannot load an idea without an id.')
+      return fetchIdeaDetail(ideaId)
+    },
     enabled: ideaId !== null,
   })
 }

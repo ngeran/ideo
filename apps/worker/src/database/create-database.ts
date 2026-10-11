@@ -5,9 +5,9 @@
 // USED BY: routes and services via request context bindings
 // =============================================================================
 
-import type { DrizzleD1Database } from 'drizzle-orm/d1'
 // ---- Imports ----------------------------------------------------------------
 import type { BatchItem } from 'drizzle-orm/batch'
+import type { DrizzleD1Database } from 'drizzle-orm/d1'
 import { drizzle } from 'drizzle-orm/d1'
 import * as drizzleSchema from './drizzle-schema'
 

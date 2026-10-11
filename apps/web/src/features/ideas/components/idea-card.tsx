@@ -5,13 +5,13 @@
 // USED BY: idea-board-page.tsx
 // =============================================================================
 
+import type { IdeaResponse } from '@ideo/shared'
+import { IDEA_STAGE_LABELS } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { MessageSquare } from 'lucide-react'
-import type { IdeaResponse } from '@ideo/shared'
+import { UserAvatar } from '../../../shared/components/ui/avatar'
 import { Badge, StageBadge } from '../../../shared/components/ui/badge'
 import { Card } from '../../../shared/components/ui/card'
-import { UserAvatar } from '../../../shared/components/ui/avatar'
-import { IDEA_STAGE_LABELS } from '@ideo/shared'
 import { IdeaVoteButton } from './idea-vote-button'
 
 // ---- Types ------------------------------------------------------------------
@@ -52,20 +52,34 @@ export function IdeaCard({ idea, onOpenIdea }: IdeaCardProps) {
 
       <div className="mt-auto flex items-center justify-between border-t border-subtle pt-2">
         <div className="flex items-center gap-2">
-          <IdeaVoteButton ideaId={idea.id} voteCount={idea.voteCount} isVoteCastByCurrentUser={idea.hasVotedByCurrentUser} />
-          <span className="flex items-center gap-1 text-sm text-muted" aria-label={`${idea.commentCount} comments`}>
+          <IdeaVoteButton
+            ideaId={idea.id}
+            voteCount={idea.voteCount}
+            isVoteCastByCurrentUser={idea.hasVotedByCurrentUser}
+          />
+          <span className="flex items-center gap-1 text-sm text-muted">
             <MessageSquare className="size-4" aria-hidden />
             {idea.commentCount}
+            <span className="sr-only">comments</span>
           </span>
         </div>
 
         {idea.author !== null ? (
-          <span className="flex items-center gap-2 text-xs text-muted" title={`Added by ${idea.author.displayName}`}>
-            <UserAvatar displayName={idea.author.displayName} avatarColor={idea.author.avatarColor} className="size-5" />
+          <span
+            className="flex items-center gap-2 text-xs text-muted"
+            title={`Added by ${idea.author.displayName}`}
+          >
+            <UserAvatar
+              displayName={idea.author.displayName}
+              avatarColor={idea.author.avatarColor}
+              className="size-5"
+            />
             {idea.author.displayName.split(' ')[0]}
           </span>
         ) : (
-          <span className="text-xs text-muted">{IDEA_STAGE_LABELS[idea.stage]} · hidden author</span>
+          <span className="text-xs text-muted">
+            {IDEA_STAGE_LABELS[idea.stage]} · hidden author
+          </span>
         )}
       </div>
     </Card>

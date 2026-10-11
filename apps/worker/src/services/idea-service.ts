@@ -7,39 +7,40 @@
 // USED BY: routes/idea-routes.ts
 // =============================================================================
 
-// ---- Imports ----------------------------------------------------------------
-import type { BatchItem } from 'drizzle-orm/batch'
-import type { CreateIdeaRequest, IdeaListQuery, UpdateIdeaRequest } from '@ideo/shared'
-import { calculateIceScore } from '@ideo/shared'
 import type {
+  CreateIdeaRequest,
   IdeaAuthorResponse,
   IdeaCommentResponse,
   IdeaDetailResponse,
+  IdeaListQuery,
   IdeaListResponse,
   IdeaResponse,
+  UpdateIdeaRequest,
 } from '@ideo/shared'
+import { calculateIceScore, IDEA_STAGE_LABELS } from '@ideo/shared'
+// ---- Imports ----------------------------------------------------------------
+import type { BatchItem } from 'drizzle-orm/batch'
 import type { UserRecord } from '../configuration/record-types'
+import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
 import type { IdeoDatabase } from '../database/create-database'
 import { asBatchStatements } from '../database/create-database'
-import { buildInsertActivityEventStatement } from '../database/activity-event-queries'
+import type { IdeaListRow } from '../database/idea-list-queries'
+import { listIdeasForWorkspace } from '../database/idea-list-queries'
 import {
   buildDeleteIdeaTagsStatement,
+  buildDeleteIdeaVoteStatement,
   buildInsertIdeaCommentStatement,
   buildInsertIdeaStatement,
   buildInsertIdeaTagStatement,
-  buildUpdateIdeaStatement,
   buildInsertIdeaVoteStatement,
-  buildDeleteIdeaVoteStatement,
+  buildUpdateIdeaStatement,
   findIdeaByIdWithAuthor,
   findIdeaVoteStats,
   listIdeaComments,
   listTagsForIdeas,
 } from '../database/idea-queries'
-import { listIdeasForWorkspace } from '../database/idea-list-queries'
-import type { IdeaListRow } from '../database/idea-list-queries'
 import { findWorkspaceMember } from '../database/workspace-member-queries'
 import { workspaceAccessDeniedError } from '../routes/api-errors'
-import { IDEA_STAGE_LABELS } from '@ideo/shared'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -63,7 +64,11 @@ function createIsoTimestamp(): string {
  * Returns the author response, or null when hidden.
  */
 function resolveVisibleAuthor(
-  listRow: { idea: { authorUserId: string; isAnonymous: boolean | number }; authorDisplayName: string; authorAvatarColor: string },
+  listRow: {
+    idea: { authorUserId: string; isAnonymous: boolean | number }
+    authorDisplayName: string
+    authorAvatarColor: string
+  },
   currentUserId: string,
 ): IdeaAuthorResponse | null {
   const isAuthorHerself = listRow.idea.authorUserId === currentUserId
@@ -78,7 +83,11 @@ function resolveVisibleAuthor(
 }
 
 /** Builds the board response for one row (tags passed in from the page query). */
-function buildIdeaResponse(listRow: IdeaListRow, tags: string[], currentUserId: string): IdeaResponse {
+function buildIdeaResponse(
+  listRow: IdeaListRow,
+  tags: string[],
+  currentUserId: string,
+): IdeaResponse {
   const { idea } = listRow
   return {
     id: idea.id,
@@ -129,10 +138,15 @@ export async function listIdeasForWorkspaceMember(
     currentUserId: requestingUser.id,
   })
 
-  const tagsByIdea = await listTagsForIdeas(database, page.rows.map((row) => row.idea.id))
+  const tagsByIdea = await listTagsForIdeas(
+    database,
+    page.rows.map((row) => row.idea.id),
+  )
 
   return {
-    ideas: page.rows.map((row) => buildIdeaResponse(row, tagsByIdea.get(row.idea.id) ?? [], requestingUser.id)),
+    ideas: page.rows.map((row) =>
+      buildIdeaResponse(row, tagsByIdea.get(row.idea.id) ?? [], requestingUser.id),
+    ),
     nextCursor: page.nextCursor,
   }
 }
@@ -216,7 +230,9 @@ export async function updateIdeaForWorkspace(
 
   // Narrow once so both the event type and the label read cleanly.
   const changedStage =
-    updateRequest.stage !== undefined && updateRequest.stage !== foundIdea.idea.stage ? updateRequest.stage : undefined
+    updateRequest.stage !== undefined && updateRequest.stage !== foundIdea.idea.stage
+      ? updateRequest.stage
+      : undefined
 
   statements.push(
     buildInsertActivityEventStatement(database, {
@@ -253,7 +269,12 @@ export async function toggleIdeaVoteForMember(
   if (!membership) throw workspaceAccessDeniedError()
 
   const votedAt = createIsoTimestamp()
-  const insertResult = await buildInsertIdeaVoteStatement(database, ideaId, votingUser.id, votedAt).run()
+  const insertResult = await buildInsertIdeaVoteStatement(
+    database,
+    ideaId,
+    votingUser.id,
+    votedAt,
+  ).run()
   const isNowVoted = insertResult.meta.changes === 1
 
   if (!isNowVoted) {
@@ -290,7 +311,11 @@ export async function getIdeaDetailForMember(
   const foundIdea = await findIdeaByIdWithAuthor(database, ideaId)
   if (!foundIdea) throw workspaceAccessDeniedError()
 
-  const membership = await findWorkspaceMember(database, foundIdea.idea.workspaceId, requestingUser.id)
+  const membership = await findWorkspaceMember(
+    database,
+    foundIdea.idea.workspaceId,
+    requestingUser.id,
+  )
   if (!membership) throw workspaceAccessDeniedError()
 
   const [tagsByIdea, comments, voteStats] = await Promise.all([
@@ -308,7 +333,11 @@ export async function getIdeaDetailForMember(
     commentCount: comments.length,
   }
 
-  const ideaResponse = buildIdeaResponse(listRowShape, tagsByIdea.get(ideaId) ?? [], requestingUser.id)
+  const ideaResponse = buildIdeaResponse(
+    listRowShape,
+    tagsByIdea.get(ideaId) ?? [],
+    requestingUser.id,
+  )
 
   const commentResponses: IdeaCommentResponse[] = comments.map((comment) => ({
     id: comment.id,
@@ -337,7 +366,11 @@ export async function addIdeaCommentForMember(
   const foundIdea = await findIdeaByIdWithAuthor(database, ideaId)
   if (!foundIdea) throw workspaceAccessDeniedError()
 
-  const membership = await findWorkspaceMember(database, foundIdea.idea.workspaceId, commentingUser.id)
+  const membership = await findWorkspaceMember(
+    database,
+    foundIdea.idea.workspaceId,
+    commentingUser.id,
+  )
   if (!membership) throw workspaceAccessDeniedError()
 
   const commentId = crypto.randomUUID()

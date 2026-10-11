@@ -175,7 +175,7 @@ function WorkspaceStatusCard({
             {firstWorkspace?.currentUserRole === 'owner' ? '· you own this' : '· member'}
           </span>
         </CardTitle>
-        <CardDescription>Your workspace is ready. The idea board lands in Phase 4.</CardDescription>
+        <CardDescription>Your workspace is ready. The idea board is live.</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-2">
         <Button size="sm" onClick={() => firstWorkspace && onOpenWorkspace(firstWorkspace.id)}>

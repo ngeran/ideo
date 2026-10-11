@@ -34,7 +34,7 @@ export class ApiRequestError extends Error {
 // ---- Types ------------------------------------------------------------------
 
 export type ApiRequestOptions<ResponseBody> = {
-  method: 'GET' | 'POST'
+  method: 'GET' | 'POST' | 'PATCH'
   /** JSON body; omitted for GET requests. */
   requestBody?: unknown
   /** The shared Zod schema the response must satisfy. */

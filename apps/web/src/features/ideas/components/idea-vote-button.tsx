@@ -18,7 +18,11 @@ type IdeaVoteButtonProps = {
 }
 
 // ---- Component --------------------------------------------------------------
-export function IdeaVoteButton({ ideaId, voteCount, isVoteCastByCurrentUser }: IdeaVoteButtonProps) {
+export function IdeaVoteButton({
+  ideaId,
+  voteCount,
+  isVoteCastByCurrentUser,
+}: IdeaVoteButtonProps) {
   const { mutate: toggleVote, isPending } = useToggleIdeaVote(ideaId)
 
   return (

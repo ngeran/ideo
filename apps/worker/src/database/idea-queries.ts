@@ -7,11 +7,10 @@
 // =============================================================================
 
 // ---- Imports ----------------------------------------------------------------
-import { and, eq, inArray } from 'drizzle-orm'
-import { asc, sql } from 'drizzle-orm'
+import { and, asc, eq, inArray, sql } from 'drizzle-orm'
 import type { IdeaRecord } from '../configuration/record-types'
 import type { IdeoDatabase } from './create-database'
-import { ideaComments, ideaTags, ideaVotes, ideas, users } from './drizzle-schema'
+import { ideaComments, ideas, ideaTags, ideaVotes, users } from './drizzle-schema'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -51,10 +50,17 @@ export function buildInsertIdeaStatement(database: IdeoDatabase, newIdea: NewIde
 }
 
 /** Builds the insert for one tag row (un-awaited, for batches). */
-export function buildInsertIdeaTagStatement(database: IdeoDatabase, ideaId: string, tagLabel: string) {
-  return database.insert(ideaTags).values({ ideaId, tagLabel }).onConflictDoNothing({
-    target: [ideaTags.ideaId, ideaTags.tagLabel],
-  })
+export function buildInsertIdeaTagStatement(
+  database: IdeoDatabase,
+  ideaId: string,
+  tagLabel: string,
+) {
+  return database
+    .insert(ideaTags)
+    .values({ ideaId, tagLabel })
+    .onConflictDoNothing({
+      target: [ideaTags.ideaId, ideaTags.tagLabel],
+    })
 }
 
 /** Builds the update for editable idea fields; scores are set explicitly. */
@@ -75,7 +81,12 @@ export function buildUpdateIdeaStatement(
 }
 
 /** Builds the insert for one vote; duplicates are a no-op (un-awaited). */
-export function buildInsertIdeaVoteStatement(database: IdeoDatabase, ideaId: string, userId: string, votedAt: string) {
+export function buildInsertIdeaVoteStatement(
+  database: IdeoDatabase,
+  ideaId: string,
+  userId: string,
+  votedAt: string,
+) {
   return database
     .insert(ideaVotes)
     .values({ ideaId, userId, createdAt: votedAt })
@@ -83,7 +94,11 @@ export function buildInsertIdeaVoteStatement(database: IdeoDatabase, ideaId: str
 }
 
 /** Builds the delete that removes one user's vote (un-awaited). */
-export function buildDeleteIdeaVoteStatement(database: IdeoDatabase, ideaId: string, userId: string) {
+export function buildDeleteIdeaVoteStatement(
+  database: IdeoDatabase,
+  ideaId: string,
+  userId: string,
+) {
   return database
     .delete(ideaVotes)
     .where(and(eq(ideaVotes.ideaId, ideaId), eq(ideaVotes.userId, userId)))
@@ -92,7 +107,13 @@ export function buildDeleteIdeaVoteStatement(database: IdeoDatabase, ideaId: str
 /** Builds the insert for one comment (un-awaited, for batches). */
 export function buildInsertIdeaCommentStatement(
   database: IdeoDatabase,
-  commentInput: { id: string; ideaId: string; authorUserId: string; commentText: string; createdAt: string },
+  commentInput: {
+    id: string
+    ideaId: string
+    authorUserId: string
+    commentText: string
+    createdAt: string
+  },
 ) {
   return database.insert(ideaComments).values(commentInput)
 }
@@ -131,7 +152,10 @@ export async function findIdeaByIdWithAuthor(
  * Reads the tag labels for a set of ideas, grouped by idea id.
  * Returns a Map from ideaId to its (possibly empty) tag list.
  */
-export async function listTagsForIdeas(database: IdeoDatabase, ideaIds: string[]): Promise<Map<string, string[]>> {
+export async function listTagsForIdeas(
+  database: IdeoDatabase,
+  ideaIds: string[],
+): Promise<Map<string, string[]>> {
   const tagsByIdea = new Map<string, string[]>(ideaIds.map((ideaId) => [ideaId, []]))
   if (ideaIds.length === 0) return tagsByIdea
 
