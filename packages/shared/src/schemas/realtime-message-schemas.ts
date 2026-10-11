@@ -12,12 +12,19 @@ import { z } from 'zod'
 
 // ---- Validation schemas -----------------------------------------------------
 
-/** What happened on the board; `subjectId` is the idea it happened to. */
+/**
+ * What happened; `subjectId` is the thing it happened to — an idea id for
+ * idea_* events, or the plan id for plan_created / plan_updated / task_updated
+ * (tasks are refetched through their plan's detail cache).
+ */
 export const WORKSPACE_EVENT_TYPES = [
   'idea_created',
   'idea_updated',
   'idea_voted',
   'idea_commented',
+  'plan_created',
+  'plan_updated',
+  'task_updated',
 ] as const
 export type WorkspaceEventType = (typeof WORKSPACE_EVENT_TYPES)[number]
 

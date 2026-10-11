@@ -8,6 +8,7 @@
 // ---- Imports ----------------------------------------------------------------
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
+import { WorkspaceRoomProvider } from '../features/workspaces/workspace-room-context'
 import { AppToaster } from '../shared/components/ui/toaster'
 import { ThemeProvider } from '../shared/hooks/use-theme'
 import { createApplicationQueryClient } from '../shared/lib/query-client'
@@ -27,8 +28,10 @@ export function ApplicationProviders({ children }: ApplicationProvidersProps) {
   return (
     <ThemeProvider>
       <QueryClientProvider client={applicationQueryClient}>
-        {children}
-        <AppToaster />
+        <WorkspaceRoomProvider>
+          {children}
+          <AppToaster />
+        </WorkspaceRoomProvider>
       </QueryClientProvider>
     </ThemeProvider>
   )

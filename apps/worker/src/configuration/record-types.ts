@@ -12,6 +12,9 @@ import type {
   activityEvents,
   ideaComments,
   ideas,
+  planMilestones,
+  plans,
+  tasks,
   users,
   workspaceInvites,
   workspaceMembers,
@@ -40,3 +43,12 @@ export type IdeaRecord = InferSelectModel<typeof ideas>
 
 /** One row of the idea_comments table. */
 export type IdeaCommentRecord = InferSelectModel<typeof ideaComments>
+
+/** One row of the plans table. */
+export type PlanRecord = InferSelectModel<typeof plans>
+
+/** One row of the plan_milestones table. */
+export type PlanMilestoneRecord = InferSelectModel<typeof planMilestones>
+
+/** One row of the tasks table. */
+export type TaskRecord = InferSelectModel<typeof tasks>

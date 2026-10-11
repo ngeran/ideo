@@ -17,11 +17,13 @@ export const WORKSPACE_DETAIL_QUERY_KEY_PREFIX = 'workspace-detail'
 
 /**
  * Loads a workspace and its member list.
- * Returns the TanStack Query result for the given workspace id.
+ * Returns the TanStack Query result for the given workspace id; callers can
+ * hold the query back (a not-yet-known id) with `isEnabled: false`.
  */
-export function useWorkspaceDetail(workspaceId: string) {
+export function useWorkspaceDetail(workspaceId: string, options: { isEnabled?: boolean } = {}) {
   return useQuery({
     queryKey: [WORKSPACE_DETAIL_QUERY_KEY_PREFIX, workspaceId],
     queryFn: () => fetchWorkspaceDetail(workspaceId),
+    enabled: options.isEnabled ?? true,
   })
 }

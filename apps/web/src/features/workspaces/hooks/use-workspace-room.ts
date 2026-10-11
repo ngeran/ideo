@@ -83,9 +83,18 @@ export function useWorkspaceRoom(workspaceId: string | null): WorkspaceRoomConne
       if (serverMessage === null) return
 
       if (serverMessage.type === 'workspace_event') {
-        // The nudge carries no payload: refresh the board and that one idea.
-        void queryCache.invalidateQueries({ queryKey: ['ideas', workspaceId] })
-        void queryCache.invalidateQueries({ queryKey: ['idea', serverMessage.subjectId] })
+        const isIdeaEvent = serverMessage.eventType.startsWith('idea_')
+        if (isIdeaEvent) {
+          // The nudge carries no payload: refresh the board and that one idea.
+          void queryCache.invalidateQueries({ queryKey: ['ideas', workspaceId] })
+          void queryCache.invalidateQueries({ queryKey: ['idea', serverMessage.subjectId] })
+          return
+        }
+
+        // Plan events carry the plan id; task events carry their plan's id,
+        // so both refresh the plan list and that one plan's detail cache.
+        void queryCache.invalidateQueries({ queryKey: ['plans', workspaceId] })
+        void queryCache.invalidateQueries({ queryKey: ['plan', serverMessage.subjectId] })
         return
       }
 

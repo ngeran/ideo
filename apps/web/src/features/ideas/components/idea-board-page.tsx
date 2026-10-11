@@ -10,7 +10,7 @@
 import type { IdeaStage, WorkspaceViewer } from '@ideo/shared'
 import { IDEA_STAGE_LABELS, IDEA_STAGE_VALUES } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Lightbulb, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '../../../shared/components/ui/button'
@@ -18,7 +18,7 @@ import { EmptyState } from '../../../shared/components/ui/empty-state'
 import { Skeleton } from '../../../shared/components/ui/skeleton'
 import { useCurrentUser } from '../../workspaces/hooks/use-current-user'
 import { useSelectedWorkspace } from '../../workspaces/hooks/use-selected-workspace'
-import { useWorkspaceRoom } from '../../workspaces/hooks/use-workspace-room'
+import { useWorkspaceRoomConnection } from '../../workspaces/workspace-room-context'
 import type { IdeaListFilters } from '../hooks/use-idea-list'
 import { useIdeaList } from '../hooks/use-idea-list'
 import { CreateIdeaDialog } from './create-idea-dialog'
@@ -99,6 +99,7 @@ function IdeaBoardSkeleton() {
 
 /** The idea board page at /board. */
 export function IdeaBoardPage() {
+  const navigate = useNavigate()
   const { selectedWorkspaceId, workspaces } = useSelectedWorkspace()
   const [filters, setFilters] = useState<IdeaListFilters>({ stage: 'all', sort: 'newest' })
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -107,8 +108,8 @@ export function IdeaBoardPage() {
   const ideaListQuery = useIdeaList(selectedWorkspaceId, filters)
   const boardIdeas = ideaListQuery.data?.pages.flatMap((page) => page.ideas) ?? []
 
-  // Live updates + presence for the selected workspace's room.
-  const { viewers, isConnected, sendViewing } = useWorkspaceRoom(selectedWorkspaceId)
+  // Live updates + presence for the selected workspace's room (app-wide).
+  const { viewers, isConnected, sendViewing } = useWorkspaceRoomConnection()
   const currentUserId = useCurrentUser().data?.user.id
 
   // Report which idea this tab is looking at; the room learns when the
@@ -281,6 +282,10 @@ export function IdeaBoardPage() {
         ideaId={openIdeaId}
         isOpen={openIdeaId !== null}
         currentViewers={openIdeaViewers}
+        onPromotedToPlan={(createdPlanId) => {
+          setOpenIdeaId(null)
+          void navigate({ to: '/plans/$planId', params: { planId: createdPlanId } })
+        }}
         onOpenChange={(drawerIsOpen) => {
           if (!drawerIsOpen) setOpenIdeaId(null)
         }}

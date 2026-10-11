@@ -28,6 +28,7 @@ import { IdeaStageSelect } from './idea-stage-select'
 import { IdeaTagEditor } from './idea-tag-editor'
 import { IdeaViewers } from './idea-viewers'
 import { IdeaVoteButton } from './idea-vote-button'
+import { PromoteToPlanButton } from './promote-to-plan-button'
 
 // ---- Types ------------------------------------------------------------------
 export type IdeaDetailDrawerProps = {
@@ -36,6 +37,8 @@ export type IdeaDetailDrawerProps = {
   isOpen: boolean
   /** Teammates currently viewing this idea (current user already excluded). */
   currentViewers: WorkspaceViewer[]
+  /** Called after promoting the open idea (pages typically navigate). */
+  onPromotedToPlan: (planId: string) => void
   onOpenChange: (isOpen: boolean) => void
 }
 
@@ -125,6 +128,7 @@ export function IdeaDetailDrawer({
   ideaId,
   isOpen,
   currentViewers,
+  onPromotedToPlan,
   onOpenChange,
 }: IdeaDetailDrawerProps) {
   const ideaDetailQuery = useIdeaDetail(ideaId)
@@ -145,7 +149,11 @@ export function IdeaDetailDrawer({
             description="It may have been deleted, or you may have lost access."
           />
         ) : (
-          <DrawerBody detailResponse={ideaDetailQuery.data} currentViewers={currentViewers} />
+          <DrawerBody
+            detailResponse={ideaDetailQuery.data}
+            currentViewers={currentViewers}
+            onPromotedToPlan={onPromotedToPlan}
+          />
         )}
       </DrawerContent>
     </Drawer>
@@ -158,9 +166,11 @@ export function IdeaDetailDrawer({
 function DrawerBody({
   detailResponse,
   currentViewers,
+  onPromotedToPlan,
 }: {
   detailResponse: NonNullable<ReturnType<typeof useIdeaDetail>['data']>
   currentViewers: WorkspaceViewer[]
+  onPromotedToPlan: (planId: string) => void
 }) {
   const { idea, comments } = detailResponse
 
@@ -183,6 +193,7 @@ function DrawerBody({
           isVoteCastByCurrentUser={idea.hasVotedByCurrentUser}
         />
         <IdeaViewers viewers={currentViewers} />
+        <PromoteToPlanButton ideaId={idea.id} onPromoted={onPromotedToPlan} />
       </div>
 
       {idea.description ? (

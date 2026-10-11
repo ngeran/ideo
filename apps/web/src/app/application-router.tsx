@@ -9,6 +9,8 @@
 // ---- Imports ----------------------------------------------------------------
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import { IdeaBoardPage } from '../features/ideas/components/idea-board-page'
+import { PlanPage } from '../features/plans/components/plan-page'
+import { PlansPage } from '../features/plans/components/plans-page'
 import { JoinPage } from '../features/workspaces/components/join-page'
 import { WorkspacePage } from '../features/workspaces/components/workspace-page'
 import { ApplicationShell } from './application-shell'
@@ -33,24 +35,28 @@ const boardRoute = createRoute({
   component: IdeaBoardPage,
 })
 
+/** Phase 6: the workspace's plans (promoted ideas, progress, timelines). */
 const plansRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/plans',
-  component: () => (
-    <SectionPlaceholderPage
-      title="Plans"
-      description="Promote an idea, add milestones and notes. Lands in Phase 6."
-    />
-  ),
+  component: PlansPage,
 })
 
+/** Phase 6: one plan — summary, milestone timeline, and the task board. */
+const planDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/plans/$planId',
+  component: PlanPage,
+})
+
+/** Tasks live inside plans; this section waits for a cross-plan view. */
 const tasksRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/tasks',
   component: () => (
     <SectionPlaceholderPage
       title="Tasks"
-      description="To do, Doing, Done — with assignees. Lands in Phase 6."
+      description="Task boards live inside each plan — open a plan to drag tasks across To do, Doing, and Done."
     />
   ),
 })
@@ -101,6 +107,7 @@ const routeTree = rootRoute.addChildren([
   overviewRoute,
   boardRoute,
   plansRoute,
+  planDetailRoute,
   tasksRoute,
   sessionsRoute,
   activityRoute,
