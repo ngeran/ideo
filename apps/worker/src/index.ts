@@ -9,5 +9,7 @@
 // ---- Imports ----------------------------------------------------------------
 import { createApplication } from './create-application'
 
+export { WorkspaceRoom } from './realtime/workspace-room'
+
 // ---- Entry point ------------------------------------------------------------
 export default createApplication()

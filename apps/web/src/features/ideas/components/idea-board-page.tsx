@@ -7,16 +7,18 @@
 // USED BY: app/application-router.tsx (route /board)
 // =============================================================================
 
-import type { IdeaStage } from '@ideo/shared'
+import type { IdeaStage, WorkspaceViewer } from '@ideo/shared'
 import { IDEA_STAGE_LABELS, IDEA_STAGE_VALUES } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { Link } from '@tanstack/react-router'
 import { Lightbulb, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '../../../shared/components/ui/button'
 import { EmptyState } from '../../../shared/components/ui/empty-state'
 import { Skeleton } from '../../../shared/components/ui/skeleton'
+import { useCurrentUser } from '../../workspaces/hooks/use-current-user'
 import { useSelectedWorkspace } from '../../workspaces/hooks/use-selected-workspace'
+import { useWorkspaceRoom } from '../../workspaces/hooks/use-workspace-room'
 import type { IdeaListFilters } from '../hooks/use-idea-list'
 import { useIdeaList } from '../hooks/use-idea-list'
 import { CreateIdeaDialog } from './create-idea-dialog'
@@ -105,6 +107,26 @@ export function IdeaBoardPage() {
   const ideaListQuery = useIdeaList(selectedWorkspaceId, filters)
   const boardIdeas = ideaListQuery.data?.pages.flatMap((page) => page.ideas) ?? []
 
+  // Live updates + presence for the selected workspace's room.
+  const { viewers, isConnected, sendViewing } = useWorkspaceRoom(selectedWorkspaceId)
+  const currentUserId = useCurrentUser().data?.user.id
+
+  // Report which idea this tab is looking at; the room learns when the
+  // drawer opens or closes.
+  useEffect(() => {
+    sendViewing(openIdeaId)
+    return () => sendViewing(null)
+  }, [openIdeaId, sendViewing])
+
+  /** Presence for one idea: teammates viewing it, current user excluded. */
+  function viewersOfIdea(ideaId: string): WorkspaceViewer[] {
+    return viewers.filter(
+      (roomViewer) => roomViewer.viewingIdeaId === ideaId && roomViewer.userId !== currentUserId,
+    )
+  }
+
+  const openIdeaViewers = openIdeaId !== null ? viewersOfIdea(openIdeaId) : []
+
   /** A fresh idea lands in Spark, so show the whole board to reveal it. */
   function handleIdeaCreated(_createdIdeaId: string) {
     setFilters((previousFilters) => ({ ...previousFilters, stage: 'all' }))
@@ -115,7 +137,23 @@ export function IdeaBoardPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-lg font-semibold text-primary">Idea board</h1>
+        <h1 className="flex items-center gap-2 text-lg font-semibold text-primary">
+          Idea board
+          <span
+            className="flex items-center gap-1.5 font-mono text-xs font-normal text-muted"
+            title={isConnected ? 'Live updates are on.' : 'Reconnecting…'}
+          >
+            <span
+              aria-hidden
+              className={
+                isConnected
+                  ? 'size-1.5 rounded-full bg-success'
+                  : 'size-1.5 animate-pulse rounded-full bg-warning'
+              }
+            />
+            {isConnected ? 'Live' : 'Connecting…'}
+          </span>
+        </h1>
         <Button
           size="sm"
           onClick={() => setIsCreateDialogOpen(true)}
@@ -205,7 +243,12 @@ export function IdeaBoardPage() {
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {boardIdeas.map((boardIdea) => (
-                  <IdeaCard key={boardIdea.id} idea={boardIdea} onOpenIdea={setOpenIdeaId} />
+                  <IdeaCard
+                    key={boardIdea.id}
+                    idea={boardIdea}
+                    currentViewers={viewersOfIdea(boardIdea.id)}
+                    onOpenIdea={setOpenIdeaId}
+                  />
                 ))}
               </div>
 
@@ -237,6 +280,7 @@ export function IdeaBoardPage() {
       <IdeaDetailDrawer
         ideaId={openIdeaId}
         isOpen={openIdeaId !== null}
+        currentViewers={openIdeaViewers}
         onOpenChange={(drawerIsOpen) => {
           if (!drawerIsOpen) setOpenIdeaId(null)
         }}

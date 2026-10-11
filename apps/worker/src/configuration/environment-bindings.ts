@@ -17,6 +17,8 @@ export type EnvironmentBindings = {
   STATIC_ASSETS: Fetcher
   /** The D1 database (see the "d1_databases" block). */
   DATABASE: D1Database
+  /** The Durable Object namespace for workspace realtime rooms. */
+  WORKSPACE_ROOM: DurableObjectNamespace
 
   /**
    * "production" in wrangler.jsonc, "development" in .dev.vars. The dev

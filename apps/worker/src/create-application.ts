@@ -19,6 +19,7 @@ import { createIdeaRoutes } from './routes/idea-routes'
 import { createMeRoutes } from './routes/me-routes'
 import { createWorkspaceInviteRoutes } from './routes/workspace-invite-routes'
 import { createWorkspaceRoutes } from './routes/workspace-routes'
+import { createWorkspaceSocketRoutes } from './routes/workspace-socket-routes'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -54,6 +55,9 @@ export function createApplication(applicationOptions: ApplicationOptions = {}): 
   application.route('/api', createWorkspaceRoutes(currentUserResolver))
   application.route('/api', createWorkspaceInviteRoutes(currentUserResolver))
   application.route('/api', createIdeaRoutes(currentUserResolver))
+
+  // Realtime rooms (Phase 5): same identity + membership gate as the API.
+  application.route('/ws', createWorkspaceSocketRoutes(currentUserResolver))
 
   // Known errors become clean JSON; anything unexpected logs and answers 500
   // without leaking internals to the client.

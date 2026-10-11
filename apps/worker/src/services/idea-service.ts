@@ -198,14 +198,14 @@ export async function createIdeaInWorkspace(
 /**
  * Updates an idea: title, description, stage, ICE scores, and tags (replaced
  * wholesale). Stage changes get their own activity event.
- * Returns nothing; the client refetches.
+ * Returns the idea's workspace id (for the realtime room notification).
  */
 export async function updateIdeaForWorkspace(
   database: IdeoDatabase,
   editingUser: UserRecord,
   ideaId: string,
   updateRequest: UpdateIdeaRequest,
-): Promise<void> {
+): Promise<string> {
   const foundIdea = await findIdeaByIdWithAuthor(database, ideaId)
   if (!foundIdea) throw workspaceAccessDeniedError()
 
@@ -251,17 +251,19 @@ export async function updateIdeaForWorkspace(
   )
 
   await database.batch(asBatchStatements(statements))
+  return foundIdea.idea.workspaceId
 }
 
 /**
  * Toggles the user's vote on an idea: votes when absent, un-votes when
- * present. Returns whether the idea is now voted on by the user.
+ * present. Returns whether the idea is now voted on, plus the idea's
+ * workspace id (for the realtime room notification).
  */
 export async function toggleIdeaVoteForMember(
   database: IdeoDatabase,
   votingUser: UserRecord,
   ideaId: string,
-): Promise<boolean> {
+): Promise<{ isVotedByCurrentUser: boolean; workspaceId: string }> {
   const foundIdea = await findIdeaByIdWithAuthor(database, ideaId)
   if (!foundIdea) throw workspaceAccessDeniedError()
 
@@ -296,7 +298,7 @@ export async function toggleIdeaVoteForMember(
     }),
   ])
 
-  return isNowVoted
+  return { isVotedByCurrentUser: isNowVoted, workspaceId: foundIdea.idea.workspaceId }
 }
 
 /**
@@ -355,14 +357,15 @@ export async function getIdeaDetailForMember(
 
 /**
  * Adds a comment to an idea and records the activity.
- * Returns the comment's id.
+ * Returns the comment's id plus the idea's workspace id (for the realtime
+ * room notification).
  */
 export async function addIdeaCommentForMember(
   database: IdeoDatabase,
   commentingUser: UserRecord,
   ideaId: string,
   commentText: string,
-): Promise<string> {
+): Promise<{ commentId: string; workspaceId: string }> {
   const foundIdea = await findIdeaByIdWithAuthor(database, ideaId)
   if (!foundIdea) throw workspaceAccessDeniedError()
 
@@ -396,5 +399,5 @@ export async function addIdeaCommentForMember(
     }),
   ])
 
-  return commentId
+  return { commentId, workspaceId: foundIdea.idea.workspaceId }
 }

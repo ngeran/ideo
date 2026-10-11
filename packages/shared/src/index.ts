@@ -59,6 +59,24 @@ export {
   ideaResponseSchema,
 } from './schemas/idea-response-schemas'
 export type {
+  ClientRealtimeMessage,
+  PresenceUpdateMessage,
+  ServerRealtimeMessage,
+  WorkspaceEventMessage,
+  WorkspaceEventType,
+  WorkspacePresenceMessage,
+  WorkspaceViewer,
+} from './schemas/realtime-message-schemas'
+export {
+  parseClientRealtimeMessage,
+  parseServerRealtimeMessage,
+  presenceUpdateMessageSchema,
+  WORKSPACE_EVENT_TYPES,
+  workspaceEventMessageSchema,
+  workspacePresenceMessageSchema,
+  workspaceViewerSchema,
+} from './schemas/realtime-message-schemas'
+export type {
   CreateWorkspaceInviteRequest,
   CreateWorkspaceRequest,
   JoinWorkspaceRequest,

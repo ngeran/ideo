@@ -39,18 +39,12 @@
     }
   ],
 
-  // Realtime (added in the realtime phase, when the Durable Object classes
-  // exist in apps/worker/src/realtime — Wrangler validates that bound classes
-  // are exported by the Worker, so the bindings ship with the code):
-  // "durable_objects": {
-  //   "bindings": [
-  //     { "name": "WORKSPACE_ROOM", "class_name": "WorkspaceRoom" },
-  //     { "name": "PLAN_DOCUMENT_ROOM", "class_name": "PlanDocumentRoom" }
-  //   ]
-  // },
-  // "migrations": [
-  //   { "tag": "v1", "new_sqlite_classes": ["WorkspaceRoom", "PlanDocumentRoom"] }
-  // ],
+  // Realtime: one WorkspaceRoom Durable Object per workspace (SQLite-backed,
+  // the free-tier class type). PlanDocumentRoom joins with the notes phase.
+  "durable_objects": {
+    "bindings": [{ "name": "WORKSPACE_ROOM", "class_name": "WorkspaceRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["WorkspaceRoom"] }],
 
   "observability": {
     "enabled": true

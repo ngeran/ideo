@@ -5,25 +5,28 @@
 // USED BY: idea-board-page.tsx
 // =============================================================================
 
-import type { IdeaResponse } from '@ideo/shared'
+import type { IdeaResponse, WorkspaceViewer } from '@ideo/shared'
 import { IDEA_STAGE_LABELS } from '@ideo/shared'
 // ---- Imports ----------------------------------------------------------------
 import { MessageSquare } from 'lucide-react'
 import { UserAvatar } from '../../../shared/components/ui/avatar'
 import { Badge, StageBadge } from '../../../shared/components/ui/badge'
 import { Card } from '../../../shared/components/ui/card'
+import { IdeaViewers } from './idea-viewers'
 import { IdeaVoteButton } from './idea-vote-button'
 
 // ---- Types ------------------------------------------------------------------
 type IdeaCardProps = {
   idea: IdeaResponse
+  /** Teammates currently viewing this idea (current user already excluded). */
+  currentViewers: WorkspaceViewer[]
   onOpenIdea: (ideaId: string) => void
 }
 
 // ---- Component --------------------------------------------------------------
 
 /** One board card. The whole body is a button for keyboard reachability. */
-export function IdeaCard({ idea, onOpenIdea }: IdeaCardProps) {
+export function IdeaCard({ idea, currentViewers, onOpenIdea }: IdeaCardProps) {
   return (
     <Card className="flex flex-col gap-3 p-4">
       <button
@@ -34,7 +37,10 @@ export function IdeaCard({ idea, onOpenIdea }: IdeaCardProps) {
       >
         <div className="flex w-full items-center justify-between gap-2">
           <StageBadge stage={idea.stage} />
-          {idea.isAnonymous ? <Badge variant="outline">Anonymous</Badge> : null}
+          <span className="flex items-center gap-2">
+            {idea.isAnonymous ? <Badge variant="outline">Anonymous</Badge> : null}
+            <IdeaViewers viewers={currentViewers} />
+          </span>
         </div>
         <span className="font-semibold text-primary">{idea.title}</span>
         {idea.description ? (

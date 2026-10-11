@@ -21,6 +21,7 @@ import type { AuthenticatedContext } from '../auth/current-user-middleware'
 import { createCurrentUserMiddleware } from '../auth/current-user-middleware'
 import type { CurrentUserResolver } from '../auth/current-user-resolver'
 import { createDatabase } from '../database/create-database'
+import { notifyWorkspaceRoomAfterResponse } from '../realtime/notify-workspace-room'
 import {
   addIdeaCommentForMember,
   createIdeaInWorkspace,
@@ -98,6 +99,17 @@ export function createIdeaRoutes(
         requestContext.req.param('workspaceId'),
         ideaRequest,
       )
+
+      notifyWorkspaceRoomAfterResponse(
+        requestContext,
+        requestContext.env,
+        requestContext.req.param('workspaceId'),
+        {
+          type: 'workspace_event',
+          eventType: 'idea_created',
+          subjectId: createdIdea.ideaId,
+        },
+      )
       return requestContext.json({ idea: createdIdea }, 201)
     },
   )
@@ -122,12 +134,18 @@ export function createIdeaRoutes(
       const updateRequest = requestContext.req.valid('json')
       const database = createDatabase(requestContext.env.DATABASE)
 
-      await updateIdeaForWorkspace(
+      const updatedIdeaWorkspaceId = await updateIdeaForWorkspace(
         database,
         currentUser,
         requestContext.req.param('ideaId'),
         updateRequest,
       )
+
+      notifyWorkspaceRoomAfterResponse(requestContext, requestContext.env, updatedIdeaWorkspaceId, {
+        type: 'workspace_event',
+        eventType: 'idea_updated',
+        subjectId: requestContext.req.param('ideaId'),
+      })
       return requestContext.json({ ok: true })
     },
   )
@@ -136,12 +154,18 @@ export function createIdeaRoutes(
     const currentUser = requestContext.get('currentUser')
     const database = createDatabase(requestContext.env.DATABASE)
 
-    const isNowVoted = await toggleIdeaVoteForMember(
+    const voteResult = await toggleIdeaVoteForMember(
       database,
       currentUser,
       requestContext.req.param('ideaId'),
     )
-    return requestContext.json({ isVotedByCurrentUser: isNowVoted })
+
+    notifyWorkspaceRoomAfterResponse(requestContext, requestContext.env, voteResult.workspaceId, {
+      type: 'workspace_event',
+      eventType: 'idea_voted',
+      subjectId: requestContext.req.param('ideaId'),
+    })
+    return requestContext.json({ isVotedByCurrentUser: voteResult.isVotedByCurrentUser })
   })
 
   ideaRoutes.post(
@@ -152,13 +176,24 @@ export function createIdeaRoutes(
       const { commentText } = requestContext.req.valid('json')
       const database = createDatabase(requestContext.env.DATABASE)
 
-      const commentId = await addIdeaCommentForMember(
+      const commentResult = await addIdeaCommentForMember(
         database,
         currentUser,
         requestContext.req.param('ideaId'),
         commentText,
       )
-      return requestContext.json({ commentId }, 201)
+
+      notifyWorkspaceRoomAfterResponse(
+        requestContext,
+        requestContext.env,
+        commentResult.workspaceId,
+        {
+          type: 'workspace_event',
+          eventType: 'idea_commented',
+          subjectId: requestContext.req.param('ideaId'),
+        },
+      )
+      return requestContext.json({ commentId: commentResult.commentId }, 201)
     },
   )
 

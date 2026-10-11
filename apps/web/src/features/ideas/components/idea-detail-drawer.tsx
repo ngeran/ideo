@@ -6,6 +6,7 @@
 // USED BY: idea-board-page.tsx
 // =============================================================================
 
+import type { WorkspaceViewer } from '@ideo/shared'
 import { Lightbulb } from 'lucide-react'
 // ---- Imports ----------------------------------------------------------------
 import { useState } from 'react'
@@ -25,6 +26,7 @@ import { useAddIdeaComment } from '../hooks/use-idea-mutations'
 import { IceScoreInput } from './ice-score-input'
 import { IdeaStageSelect } from './idea-stage-select'
 import { IdeaTagEditor } from './idea-tag-editor'
+import { IdeaViewers } from './idea-viewers'
 import { IdeaVoteButton } from './idea-vote-button'
 
 // ---- Types ------------------------------------------------------------------
@@ -32,6 +34,8 @@ export type IdeaDetailDrawerProps = {
   /** The open idea; null keeps the drawer's query disabled. */
   ideaId: string | null
   isOpen: boolean
+  /** Teammates currently viewing this idea (current user already excluded). */
+  currentViewers: WorkspaceViewer[]
   onOpenChange: (isOpen: boolean) => void
 }
 
@@ -117,7 +121,12 @@ function IdeaCommentComposer({ ideaId }: { ideaId: string }) {
 // ---- Component --------------------------------------------------------------
 
 /** Right-side drawer with everything about one idea. */
-export function IdeaDetailDrawer({ ideaId, isOpen, onOpenChange }: IdeaDetailDrawerProps) {
+export function IdeaDetailDrawer({
+  ideaId,
+  isOpen,
+  currentViewers,
+  onOpenChange,
+}: IdeaDetailDrawerProps) {
   const ideaDetailQuery = useIdeaDetail(ideaId)
 
   return (
@@ -136,7 +145,7 @@ export function IdeaDetailDrawer({ ideaId, isOpen, onOpenChange }: IdeaDetailDra
             description="It may have been deleted, or you may have lost access."
           />
         ) : (
-          <DrawerBody detailResponse={ideaDetailQuery.data} />
+          <DrawerBody detailResponse={ideaDetailQuery.data} currentViewers={currentViewers} />
         )}
       </DrawerContent>
     </Drawer>
@@ -148,8 +157,10 @@ export function IdeaDetailDrawer({ ideaId, isOpen, onOpenChange }: IdeaDetailDra
 /** The drawer's content once the detail has loaded. */
 function DrawerBody({
   detailResponse,
+  currentViewers,
 }: {
   detailResponse: NonNullable<ReturnType<typeof useIdeaDetail>['data']>
+  currentViewers: WorkspaceViewer[]
 }) {
   const { idea, comments } = detailResponse
 
@@ -171,6 +182,7 @@ function DrawerBody({
           voteCount={idea.voteCount}
           isVoteCastByCurrentUser={idea.hasVotedByCurrentUser}
         />
+        <IdeaViewers viewers={currentViewers} />
       </div>
 
       {idea.description ? (
