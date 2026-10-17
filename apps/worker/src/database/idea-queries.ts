@@ -22,6 +22,10 @@ export type NewIdeaInput = {
   title: string
   description: string
   stage: string
+  /** 1 when the idea must hide its author (brainstorm sessions). */
+  isAnonymous?: number
+  /** Set when the idea is a spark from a brainstorm session. */
+  brainstormSessionId?: string | null
   createdAt: string
   updatedAt: string
 }
@@ -42,10 +46,11 @@ export type IdeaCommentRecordWithAuthor = {
 export function buildInsertIdeaStatement(database: IdeoDatabase, newIdea: NewIdeaInput) {
   return database.insert(ideas).values({
     ...newIdea,
-    isAnonymous: 0,
+    isAnonymous: newIdea.isAnonymous ?? 0,
     impactScore: null,
     confidenceScore: null,
     easeScore: null,
+    brainstormSessionId: newIdea.brainstormSessionId ?? null,
   })
 }
 

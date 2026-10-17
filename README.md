@@ -2,9 +2,9 @@
 
 A private space for your team's ideas, brainstorms, plans, and tasks — from first spark to launched. Runs entirely on **Cloudflare's free tier**: one Worker serves the web app and the API, D1 stores the data, and Durable Objects power realtime updates.
 
-## Status: Phase 7 — collaborative notes
+## Status: Phase 8 — brainstorm sessions
 
-The design system (light/dark themes, app shell, command palette), authentication (Cloudflare Access in production, a guarded dev fallback locally), workspaces with invite codes, the idea board (create, filter by stage, sort, vote, comment, tags, ICE scoring), realtime (live updates and presence via a per-workspace Durable Object room), plans (one-button promotion from an idea, milestone timeline, and a To do / Doing / Done task board with assignees and drag-to-reorder), and collaborative notes on every plan (Tiptap + Yjs over a per-plan Durable Object, with offline edits via IndexedDB) are live. Next phases: brainstorm sessions, PWA/export/activity, hardening.
+The design system (light/dark themes, app shell, command palette), authentication (Cloudflare Access in production, a guarded dev fallback locally), workspaces with invite codes, the idea board (create, filter by stage, sort, vote, comment, tags, ICE scoring), realtime (live updates and presence via a per-workspace Durable Object room), plans (one-button promotion from an idea, milestone timeline, and a To do / Doing / Done task board with assignees and drag-to-reorder), collaborative notes on every plan (Tiptap + Yjs over a per-plan Durable Object, with offline edits via IndexedDB), and brainstorm sessions (timeboxed timer, built-in spark prompts, anonymous submissions until the end) are live. Next phases: PWA/export/activity, hardening.
 
 ## Run it locally in 5 steps
 

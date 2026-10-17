@@ -11,6 +11,7 @@ import { createRootRoute, createRoute, createRouter } from '@tanstack/react-rout
 import { IdeaBoardPage } from '../features/ideas/components/idea-board-page'
 import { PlanPage } from '../features/plans/components/plan-page'
 import { PlansPage } from '../features/plans/components/plans-page'
+import { SessionsPage } from '../features/sessions/components/sessions-page'
 import { JoinPage } from '../features/workspaces/components/join-page'
 import { WorkspacePage } from '../features/workspaces/components/workspace-page'
 import { ApplicationShell } from './application-shell'
@@ -61,15 +62,11 @@ const tasksRoute = createRoute({
   ),
 })
 
+/** Phase 8: timeboxed brainstorm sessions (timer, sparks, anonymity). */
 const sessionsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/sessions',
-  component: () => (
-    <SectionPlaceholderPage
-      title="Brainstorm sessions"
-      description="Timeboxed live sessions with spark prompts. Lands in Phase 8."
-    />
-  ),
+  component: SessionsPage,
 })
 
 const activityRoute = createRoute({

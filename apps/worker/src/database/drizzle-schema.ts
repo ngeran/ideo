@@ -73,6 +73,9 @@ export const ideas = sqliteTable('ideas', {
   impactScore: integer('impact_score'),
   confidenceScore: integer('confidence_score'),
   easeScore: integer('ease_score'),
+  brainstormSessionId: text('brainstorm_session_id').references(() => brainstormSessions.id, {
+    onDelete: 'set null',
+  }),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 })
@@ -168,6 +171,7 @@ export const brainstormSessions = sqliteTable('brainstorm_sessions', {
   createdByUserId: text('created_by_user_id')
     .notNull()
     .references(() => users.id),
+  createdAt: text('created_at').notNull().default(''),
 })
 
 export const activityEvents = sqliteTable('activity_events', {

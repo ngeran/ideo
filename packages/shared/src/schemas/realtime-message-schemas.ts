@@ -14,8 +14,9 @@ import { z } from 'zod'
 
 /**
  * What happened; `subjectId` is the thing it happened to — an idea id for
- * idea_* events, or the plan id for plan_created / plan_updated / task_updated
- * (tasks are refetched through their plan's detail cache).
+ * idea_* events, the plan id for plan_created / plan_updated / task_updated
+ * (tasks are refetched through their plan's detail cache), or the session id
+ * for session_started / session_ended / spark_added.
  */
 export const WORKSPACE_EVENT_TYPES = [
   'idea_created',
@@ -25,6 +26,9 @@ export const WORKSPACE_EVENT_TYPES = [
   'plan_created',
   'plan_updated',
   'task_updated',
+  'session_started',
+  'session_ended',
+  'spark_added',
 ] as const
 export type WorkspaceEventType = (typeof WORKSPACE_EVENT_TYPES)[number]
 

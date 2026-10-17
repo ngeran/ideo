@@ -91,6 +91,20 @@ export function useWorkspaceRoom(workspaceId: string | null): WorkspaceRoomConne
           return
         }
 
+        const isSessionEvent =
+          serverMessage.eventType.startsWith('session_') ||
+          serverMessage.eventType === 'spark_added'
+        if (isSessionEvent) {
+          // Session events refresh the list and that one session; spark
+          // additions land on the board as ideas too.
+          void queryCache.invalidateQueries({ queryKey: ['sessions', workspaceId] })
+          void queryCache.invalidateQueries({ queryKey: ['session', serverMessage.subjectId] })
+          if (serverMessage.eventType === 'spark_added') {
+            void queryCache.invalidateQueries({ queryKey: ['ideas', workspaceId] })
+          }
+          return
+        }
+
         // Plan events carry the plan id; task events carry their plan's id,
         // so both refresh the plan list and that one plan's detail cache.
         void queryCache.invalidateQueries({ queryKey: ['plans', workspaceId] })

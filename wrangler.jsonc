@@ -11,13 +11,11 @@
   "main": "apps/worker/src/index.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-
   // Pins production auth: the dev identity fallback only runs when this is
   // NOT "production". Locally, .dev.vars overrides it to "development".
   "vars": {
     "ENVIRONMENT": "production"
   },
-
   // The Worker serves the built single-page app from apps/web/dist.
   // "run_worker_first" is critical: without it the SPA fallback would answer
   // /api and /ws requests with index.html instead of reaching the Worker.
@@ -27,32 +25,42 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*", "/ws/*"]
   },
-
-  // Create with: npx wrangler d1 create ideo-database
-  // then paste the printed database_id below. See docs/deployment.md.
+  // The one database binding; all code reads env.DATABASE. Local dev and
+  // tests run against wrangler's local simulator, so this id only matters
+  // for remote commands and deploys.
   "d1_databases": [
     {
       "binding": "DATABASE",
       "database_name": "ideo-database",
-      "database_id": "REPLACE_WITH_ID_FROM_wrangler_d1_create",
+      "database_id": "f3606ca0-f80e-485b-b3d4-f06372e62b22",
       "migrations_dir": "apps/worker/migrations"
     }
   ],
-
   // Realtime: one WorkspaceRoom Durable Object per workspace, one
   // PlanDocumentRoom per plan (SQLite-backed, the free-tier class type).
   // Each new class ships in its own migration tag.
   "durable_objects": {
     "bindings": [
-      { "name": "WORKSPACE_ROOM", "class_name": "WorkspaceRoom" },
-      { "name": "PLAN_DOCUMENT_ROOM", "class_name": "PlanDocumentRoom" }
+      {
+        "name": "WORKSPACE_ROOM",
+        "class_name": "WorkspaceRoom"
+      },
+      {
+        "name": "PLAN_DOCUMENT_ROOM",
+        "class_name": "PlanDocumentRoom"
+      }
     ]
   },
   "migrations": [
-    { "tag": "v1", "new_sqlite_classes": ["WorkspaceRoom"] },
-    { "tag": "v2", "new_sqlite_classes": ["PlanDocumentRoom"] }
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["WorkspaceRoom"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["PlanDocumentRoom"]
+    }
   ],
-
   "observability": {
     "enabled": true
   }

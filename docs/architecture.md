@@ -60,6 +60,23 @@ Durable Objects. No R2, Queues, orKV yet.
   the caller must belong to its workspace (404 either way) before any socket
   is created.
 
+## Brainstorm sessions (Phase 8)
+
+- **Sparks are ideas:** a spark is an ordinary idea row linked to its session
+  (`ideas.brainstorm_session_id`, migration 0002), so it appears on the board
+  immediately and benefits from votes, comments, and ICE scoring for free.
+- **Anonymous until the end:** sparks created in an anonymous session carry
+  `is_anonymous = 1`; ending the session flips them back in one UPDATE — the
+  reveal is a server transaction, not a client convention.
+- **No per-second traffic:** the timer's start is the only server moment.
+  `session_started` fixes `started_at`; every client counts down locally from
+  `startedAt + durationSeconds`. Ending is manual (or when the countdown
+  reaches zero, anyone can press End).
+- **Spark prompts** are a static shared constant (`SPARK_PROMPTS`) — no AI
+  cost, no network call.
+- **Sessions list** is cursor-paginated like every other list; the workspace
+  index covers the sort.
+
 ## D1
 
 - Migrations in `apps/worker/migrations`; every filtered column is covered by

@@ -18,8 +18,42 @@ export type { IdeaStage } from './constants/pipeline-stages'
 export { IDEA_STAGE_LABELS, IDEA_STAGE_VALUES } from './constants/pipeline-stages'
 export type { PlanStatus } from './constants/plan-statuses'
 export { PLAN_STATUS_LABELS, PLAN_STATUS_VALUES } from './constants/plan-statuses'
+export { pickSparkPrompt, SPARK_PROMPTS } from './constants/spark-prompts'
 export type { TaskStatus } from './constants/task-statuses'
 export { TASK_STATUS_LABELS, TASK_STATUS_VALUES } from './constants/task-statuses'
+export type {
+  SessionCreatedResponse,
+  SparkAddedResponse,
+} from './schemas/brainstorm-mutation-response-schemas'
+export {
+  sessionCreatedResponseSchema,
+  sessionEndedResponseSchema,
+  sessionStartedResponseSchema,
+  sparkAddedResponseSchema,
+} from './schemas/brainstorm-mutation-response-schemas'
+export type {
+  AddSessionSparkRequest,
+  BrainstormListQuery,
+  CreateBrainstormSessionRequest,
+} from './schemas/brainstorm-request-schemas'
+export {
+  addSessionSparkRequestSchema,
+  BRAINSTORM_DURATION_DEFAULT,
+  BRAINSTORM_DURATION_MAXIMUM,
+  BRAINSTORM_DURATION_MINIMUM,
+  brainstormListQuerySchema,
+  createBrainstormSessionRequestSchema,
+} from './schemas/brainstorm-request-schemas'
+export type {
+  BrainstormListResponse,
+  BrainstormSessionDetailResponse,
+  BrainstormSessionResponse,
+} from './schemas/brainstorm-response-schemas'
+export {
+  brainstormListResponseSchema,
+  brainstormSessionDetailResponseSchema,
+  brainstormSessionResponseSchema,
+} from './schemas/brainstorm-response-schemas'
 export type { CursorPaginationQuery } from './schemas/common-request-schemas'
 export { cursorPaginationQuerySchema } from './schemas/common-request-schemas'
 export type {

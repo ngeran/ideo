@@ -83,7 +83,7 @@ function resolveVisibleAuthor(
 }
 
 /** Builds the board response for one row (tags passed in from the page query). */
-function buildIdeaResponse(
+export function buildIdeaResponse(
   listRow: IdeaListRow,
   tags: string[],
   currentUserId: string,

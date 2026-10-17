@@ -10,6 +10,7 @@
 import type { InferSelectModel } from 'drizzle-orm'
 import type {
   activityEvents,
+  brainstormSessions,
   ideaComments,
   ideas,
   planMilestones,
@@ -52,3 +53,6 @@ export type PlanMilestoneRecord = InferSelectModel<typeof planMilestones>
 
 /** One row of the tasks table. */
 export type TaskRecord = InferSelectModel<typeof tasks>
+
+/** One row of the brainstorm_sessions table. */
+export type BrainstormSessionRecord = InferSelectModel<typeof brainstormSessions>
