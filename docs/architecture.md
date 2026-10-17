@@ -37,6 +37,29 @@ Durable Objects. No R2, Queues, orKV yet.
   identity and checks workspace membership (404 for non-members, same as the
   REST API) before any socket is created.
 
+## Collaborative notes (Phase 7)
+
+- **Class type:** `PlanDocumentRoom` is the second SQLite-backed Durable
+  Object class (migration tag `v2`). One instance per plan, named by the plan
+  id; it speaks the standard y-websocket wire protocol (sync + awareness
+  binary frames) so any Yjs client can connect.
+- **Storage:** the merged Yjs document persists to the object's own storage
+  under one key, flushed on a 2-second debounce (and when the last editor
+  disconnects) — no D1 row churn for keystrokes. Orphaned room storage after
+  a plan deletion is accepted waste on the free tier.
+- **Offline sync:** the browser mirrors the document to IndexedDB
+  (y-indexeddb), so edits made offline merge through the CRDT when the socket
+  returns.
+- **Message validation note:** the definition of done asks for Zod validation
+  on every WebSocket message. Notes frames are binary Yjs protocol messages,
+  not JSON, so they cannot be Zod-validated; the equivalent guarantee is
+  protocol decoding under strict guards — malformed frames are logged and
+  dropped, never crash the room. The JSON socket (`WorkspaceRoom`) remains
+  fully Zod-validated in both directions.
+- **Membership gate:** identical to the REST API — the plan must exist and
+  the caller must belong to its workspace (404 either way) before any socket
+  is created.
+
 ## D1
 
 - Migrations in `apps/worker/migrations`; every filtered column is covered by

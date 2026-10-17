@@ -21,6 +21,7 @@ import { Skeleton } from '../../../shared/components/ui/skeleton'
 import { useWorkspaceDetail } from '../../workspaces/hooks/use-workspace-detail'
 import { usePlanDetail } from '../hooks/use-plan-detail'
 import { useAddPlanMilestone, useUpdatePlan } from '../hooks/use-plan-mutations'
+import { PlanNotes } from './plan-notes'
 import { PlanStatusBadge } from './plan-status-badge'
 import { TaskBoard } from './task-board'
 
@@ -28,6 +29,17 @@ import { TaskBoard } from './task-board'
 
 /** The milestone rows the page renders. */
 type PlanMilestoneRow = PlanDetailResponse['milestones'][number]
+
+/** The plan page's sections. */
+type PlanTabId = 'tasks' | 'notes'
+
+// ---- Constants --------------------------------------------------------------
+
+/** The plan page tabs, in display order. */
+const PLAN_TABS: Array<{ tabId: PlanTabId; tabLabel: string }> = [
+  { tabId: 'tasks', tabLabel: 'Task board' },
+  { tabId: 'notes', tabLabel: 'Notes' },
+]
 
 // ---- Section components -----------------------------------------------------
 
@@ -151,6 +163,7 @@ function MilestoneTimeline({
 export function PlanPage() {
   const { planId } = useParams({ from: '/plans/$planId' })
   const planDetailQuery = usePlanDetail(planId)
+  const [activeTab, setActiveTab] = useState<PlanTabId>('tasks')
 
   // Members power the task assignee select; wait for the plan to load first.
   const planWorkspaceId = planDetailQuery.data?.plan.workspaceId ?? null
@@ -213,15 +226,36 @@ export function PlanPage() {
 
       <MilestoneTimeline planId={plan.id} milestones={milestones} />
 
-      <section className="flex flex-col gap-2">
-        <p className="font-mono text-xs text-muted">TASK BOARD</p>
+      <div className="flex gap-1 border-b border-subtle" role="tablist" aria-label="Plan sections">
+        {PLAN_TABS.map((planTab) => (
+          <button
+            key={planTab.tabId}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === planTab.tabId}
+            onClick={() => setActiveTab(planTab.tabId)}
+            className={
+              '-mb-px rounded-control border-b-2 px-3 py-2 text-sm transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-accent ' +
+              (activeTab === planTab.tabId
+                ? 'border-accent font-medium text-primary'
+                : 'border-transparent text-muted hover:text-primary')
+            }
+          >
+            {planTab.tabLabel}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'tasks' ? (
         <TaskBoard
           planId={plan.id}
           tasks={tasks}
           milestones={milestones}
           members={workspaceMembers}
         />
-      </section>
+      ) : (
+        <PlanNotes planId={plan.id} />
+      )}
     </div>
   )
 }

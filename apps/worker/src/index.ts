@@ -9,6 +9,7 @@
 // ---- Imports ----------------------------------------------------------------
 import { createApplication } from './create-application'
 
+export { PlanDocumentRoom } from './realtime/plan-document-room'
 export { WorkspaceRoom } from './realtime/workspace-room'
 
 // ---- Entry point ------------------------------------------------------------

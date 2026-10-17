@@ -17,6 +17,7 @@ import { ApiError } from './routes/api-errors'
 import { createHealthRoutes } from './routes/health-routes'
 import { createIdeaRoutes } from './routes/idea-routes'
 import { createMeRoutes } from './routes/me-routes'
+import { createPlanDocumentSocketRoutes } from './routes/plan-document-socket-routes'
 import { createPlanRoutes } from './routes/plan-routes'
 import { createWorkspaceInviteRoutes } from './routes/workspace-invite-routes'
 import { createWorkspaceRoutes } from './routes/workspace-routes'
@@ -60,6 +61,7 @@ export function createApplication(applicationOptions: ApplicationOptions = {}): 
 
   // Realtime rooms (Phase 5): same identity + membership gate as the API.
   application.route('/ws', createWorkspaceSocketRoutes(currentUserResolver))
+  application.route('/ws', createPlanDocumentSocketRoutes(currentUserResolver))
 
   // Known errors become clean JSON; anything unexpected logs and answers 500
   // without leaking internals to the client.

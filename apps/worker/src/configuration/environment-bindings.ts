@@ -19,6 +19,8 @@ export type EnvironmentBindings = {
   DATABASE: D1Database
   /** The Durable Object namespace for workspace realtime rooms. */
   WORKSPACE_ROOM: DurableObjectNamespace
+  /** The Durable Object namespace for plan notes (Yjs documents). */
+  PLAN_DOCUMENT_ROOM: DurableObjectNamespace
 
   /**
    * "production" in wrangler.jsonc, "development" in .dev.vars. The dev
