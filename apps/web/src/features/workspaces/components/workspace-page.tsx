@@ -7,7 +7,7 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { Link, useParams } from '@tanstack/react-router'
-import { Lightbulb, UserRoundPlus } from 'lucide-react'
+import { Download, Lightbulb, UserRoundPlus } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '../../../shared/components/ui/badge'
 import { Button } from '../../../shared/components/ui/button'
@@ -67,9 +67,25 @@ export function WorkspacePage() {
             {workspace.currentUserRole === 'owner' ? 'You own this' : 'Member'}
           </Badge>
         </div>
-        <Button variant="secondary" size="sm" onClick={() => setIsInviteDialogOpen(true)}>
-          <UserRoundPlus aria-hidden /> Invite teammates
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={`/api/workspaces/${workspaceId}/export?format=markdown`}
+            download
+            className="inline-flex h-8 items-center gap-2 rounded-control border border-subtle bg-card px-3 text-sm text-primary transition-colors duration-150 outline-none hover:bg-sunken focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <Download aria-hidden /> Markdown
+          </a>
+          <a
+            href={`/api/workspaces/${workspaceId}/export?format=json`}
+            download
+            className="inline-flex h-8 items-center gap-2 rounded-control border border-subtle bg-card px-3 text-sm text-primary transition-colors duration-150 outline-none hover:bg-sunken focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <Download aria-hidden /> JSON
+          </a>
+          <Button variant="secondary" size="sm" onClick={() => setIsInviteDialogOpen(true)}>
+            <UserRoundPlus aria-hidden /> Invite teammates
+          </Button>
+        </div>
       </div>
 
       <Card>

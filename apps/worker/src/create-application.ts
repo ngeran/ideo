@@ -13,8 +13,10 @@ import type { AuthenticatedContextVariables } from './auth/current-user-middlewa
 import type { CurrentUserResolver } from './auth/current-user-resolver'
 import { createDefaultCurrentUserResolver } from './auth/current-user-resolver'
 import type { EnvironmentBindings } from './configuration/environment-bindings'
+import { createActivityRoutes } from './routes/activity-routes'
 import { ApiError } from './routes/api-errors'
 import { createBrainstormRoutes } from './routes/brainstorm-routes'
+import { createExportRoutes } from './routes/export-routes'
 import { createHealthRoutes } from './routes/health-routes'
 import { createIdeaRoutes } from './routes/idea-routes'
 import { createMeRoutes } from './routes/me-routes'
@@ -60,6 +62,8 @@ export function createApplication(applicationOptions: ApplicationOptions = {}): 
   application.route('/api', createIdeaRoutes(currentUserResolver))
   application.route('/api', createPlanRoutes(currentUserResolver))
   application.route('/api', createBrainstormRoutes(currentUserResolver))
+  application.route('/api', createActivityRoutes(currentUserResolver))
+  application.route('/api', createExportRoutes(currentUserResolver))
 
   // Realtime rooms (Phase 5): same identity + membership gate as the API.
   application.route('/ws', createWorkspaceSocketRoutes(currentUserResolver))

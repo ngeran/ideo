@@ -83,6 +83,9 @@ export function useWorkspaceRoom(workspaceId: string | null): WorkspaceRoomConne
       if (serverMessage === null) return
 
       if (serverMessage.type === 'workspace_event') {
+        // Every event is also an activity row: the open feed refreshes.
+        void queryCache.invalidateQueries({ queryKey: ['activity', workspaceId] })
+
         const isIdeaEvent = serverMessage.eventType.startsWith('idea_')
         if (isIdeaEvent) {
           // The nudge carries no payload: refresh the board and that one idea.

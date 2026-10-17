@@ -8,6 +8,7 @@
 
 // ---- Imports ----------------------------------------------------------------
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { ActivityPage } from '../features/activity/components/activity-page'
 import { IdeaBoardPage } from '../features/ideas/components/idea-board-page'
 import { PlanPage } from '../features/plans/components/plan-page'
 import { PlansPage } from '../features/plans/components/plans-page'
@@ -69,15 +70,11 @@ const sessionsRoute = createRoute({
   component: SessionsPage,
 })
 
+/** Phase 9: the workspace's activity feed (who did what, live). */
 const activityRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/activity',
-  component: () => (
-    <SectionPlaceholderPage
-      title="Activity feed"
-      description="Who did what, live. Lands in Phase 9."
-    />
-  ),
+  component: ActivityPage,
 })
 
 /** Phase 3: one workspace's home (members, invites). */

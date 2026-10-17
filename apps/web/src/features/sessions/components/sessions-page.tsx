@@ -83,6 +83,10 @@ function SessionPanel({ sessionId }: { sessionId: string }) {
 
   const { session, sparks } = sessionDetailQuery.data
 
+  async function handleSparkSubmit() {
+    await addSpark.mutateAsync({ sparkText })
+  }
+
   return (
     <Card>
       <CardHeader>

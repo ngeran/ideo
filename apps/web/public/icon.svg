@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Ideo</title>
+  <!-- Ideo's mark: a lightbulb (the spark) on the app's teal accent. -->
+  <rect width="512" height="512" rx="96" fill="#007a80"/>
+  <circle cx="256" cy="208" r="104" fill="#ffffff"/>
+  <path d="M196 296 L316 296 L306 352 L206 352 Z" fill="#ffffff"/>
+  <rect x="216" y="360" width="80" height="20" rx="10" fill="#ffffff" opacity="0.9"/>
+  <rect x="224" y="388" width="64" height="18" rx="9" fill="#ffffff" opacity="0.7"/>
+  <rect x="234" y="414" width="44" height="16" rx="8" fill="#ffffff" opacity="0.5"/>
+</svg>

@@ -77,6 +77,24 @@ Durable Objects. No R2, Queues, orKV yet.
 - **Sessions list** is cursor-paginated like every other list; the workspace
   index covers the sort.
 
+## PWA, export, and the activity feed (Phase 9)
+
+- **Service worker** (vite-plugin-pwa, generated at build): the app shell is
+  precached; `/api/*` GET requests are **network-first** (fresh when online,
+  cached when offline, 3 s timeout, 1 h expiry, 100 entries); mutations are
+  never cached; `/ws/*` is excluded from both caching and the navigation
+  fallback, so WebSockets always reach the Worker.
+- **Export**: one GET (`?format=markdown|json`) streams a workspace bundle —
+  members, ideas, plans with milestones and tasks, and brainstorm sessions —
+  as a download. Page-capped (≤500 ideas / 100 plans / 200 sessions) so one
+  request cannot exhaust the D1 allowance. Anonymity follows the board: a
+  member's own anonymous sparks export with their name, everyone else's do
+  not.
+- **Activity feed**: a pure read model over the `activity_events` rows that
+  every mutation has written since Phase 3. Newest first, keyset-paginated,
+  joined with actor names; the open feed refreshes on every realtime
+  workspace event (ids-only nudges → cache invalidation → refetch).
+
 ## D1
 
 - Migrations in `apps/worker/migrations`; every filtered column is covered by

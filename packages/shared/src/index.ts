@@ -22,6 +22,16 @@ export { pickSparkPrompt, SPARK_PROMPTS } from './constants/spark-prompts'
 export type { TaskStatus } from './constants/task-statuses'
 export { TASK_STATUS_LABELS, TASK_STATUS_VALUES } from './constants/task-statuses'
 export type {
+  ActivityActorResponse,
+  ActivityEventResponse,
+  ActivityListResponse,
+} from './schemas/activity-schemas'
+export {
+  activityEventResponseSchema,
+  activityListQuerySchema,
+  activityListResponseSchema,
+} from './schemas/activity-schemas'
+export type {
   SessionCreatedResponse,
   SparkAddedResponse,
 } from './schemas/brainstorm-mutation-response-schemas'
